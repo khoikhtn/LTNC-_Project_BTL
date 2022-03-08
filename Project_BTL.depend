@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1646712490 source:d:\21.09.01 - tin uet\code\project_btl\main.cpp
+	<iostream>
+	<SDL.h>
+	<SDL_image.h>
+

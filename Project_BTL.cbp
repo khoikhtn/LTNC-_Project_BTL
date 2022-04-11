@@ -31,6 +31,12 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="Knight.cpp" />
+		<Unit filename="Knight.h" />
+		<Unit filename="Monster.cpp" />
+		<Unit filename="Monster.h" />
+		<Unit filename="SDL_utils.cpp" />
+		<Unit filename="SDL_utils.h" />
 		<Unit filename="main.cpp" />
 		<Extensions />
 	</Project>

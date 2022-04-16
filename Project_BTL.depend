@@ -9,20 +9,20 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1649698909 source:d:\22.06.04 uet\code\project_btl\knight.cpp
+1650173536 source:d:\22.06.04 uet\code\project_btl\knight.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
 	"Knight.h"
 
-1649696000 source:d:\22.06.04 uet\code\project_btl\main.cpp
+1650001668 source:d:\22.06.04 uet\code\project_btl\main.cpp
 	<iostream>
 	<SDL.h>
 	"Knight.h"
 	"Monster.h"
 	"SDL_utils.h"
 
-1649698926 d:\22.06.04 uet\code\project_btl\knight.h
+1650001668 d:\22.06.04 uet\code\project_btl\knight.h
 	<iostream>
 	<SDL.h>
 	"Monster.h"
@@ -33,14 +33,14 @@
 	<SDL_image.h>
 	<iostream>
 
-1649657099 source:d:\22.06.04 uet\code\project_btl\sdl_utils.cpp
+1650003960 source:d:\22.06.04 uet\code\project_btl\sdl_utils.cpp
 	"SDL_utils.h"
 
-1649696703 d:\22.06.04 uet\code\project_btl\monster.h
+1649717374 d:\22.06.04 uet\code\project_btl\monster.h
 	<iostream>
 	"Knight.h"
 
-1649696703 source:d:\22.06.04 uet\code\project_btl\monster.cpp
+1649987494 source:d:\22.06.04 uet\code\project_btl\monster.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>

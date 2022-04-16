@@ -46,6 +46,17 @@ void Sprite(SDL_Rect SpriteClips[])
     SpriteClips[5].y = 0;
     SpriteClips[5].w = 90;
     SpriteClips[5].h = 208;
+
+    SpriteClips[6].x = 540;//Monster being hit || Knight's jump
+    SpriteClips[6].y = 0;
+    SpriteClips[6].w = 90;
+    SpriteClips[6].h = 208;
+
+    SpriteClips[7].x = 0;//Empty Space
+    SpriteClips[7].y = 0;
+    SpriteClips[7].w = 1;
+    SpriteClips[7].h = 1;
+
 }
 
 SDL_Texture* load_map(SDL_Renderer* renderer, string path)

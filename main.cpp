@@ -13,13 +13,14 @@ const int LEVEL_HEIGHT = 400;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
+const int NUMBERS_OF_MONSTERS = 4;
 int main(int argc, char* argv[])
 {
     SDL_Window* window;
     SDL_Renderer* renderer;
     init(window, renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    SDL_Rect SpriteCLips[6];
+    SDL_Rect SpriteCLips[10];
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     Sprite(SpriteCLips);
 
@@ -30,10 +31,16 @@ int main(int argc, char* argv[])
     knight.currentClip = &SpriteCLips[0];
     knight.render(0, 0, renderer);
 
-    Monster monster;
-    monster.loadtexture("monster2.png", "monster1.png", renderer);
-    monster.currentClip = &SpriteCLips[0];
-    monster.render(0, 0, renderer);
+    Monster monster[4];
+    for(int i=0; i<=3; i++)
+    {
+        monster[i].loadtexture("monster2.png", "monster1.png", renderer);
+        monster[i].currentClip = &SpriteCLips[0];
+        monster[i].render(0, 0, renderer);
+    }
+    monster[1].mPosX = 800;
+    //monster[2].mPosX = 700;
+    //monster[3].mPosX = 900;
 
     bool quit = false;
     SDL_Event e;
@@ -43,11 +50,11 @@ int main(int argc, char* argv[])
         while(SDL_PollEvent(&e) != 0)
         {
             if(e.type == SDL_QUIT) quit = true;
-            knight.handleEvent(e, SpriteCLips, monster, renderer, mapp, camera);
-            knight.move();
+            knight.handleEvent(e, SpriteCLips, monster, renderer, mapp, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
+            knight.move(e);
         }
-        monster.move(knight, SpriteCLips);
-
+        for(int i=0; i<=3; i++) monster[i].move(knight.mPosX, SpriteCLips);
+        for(int i=0; i<=3; i++) knight.being_hit_status(monster[i], SpriteCLips);
         camera.x = knight.mPosX - SCREEN_WIDTH/2;
         camera.y = knight.mPosX - SCREEN_HEIGHT/2;
 
@@ -68,10 +75,9 @@ int main(int argc, char* argv[])
             camera.y = LEVEL_HEIGHT - camera.h;
         }
 
-        if(e.key.keysym.sym != SDLK_z) SDL_RenderClear(renderer);
         render_map(renderer, mapp, camera);
         knight.render(camera.x, camera.y, renderer);
-        monster.render(camera.x, camera.y, renderer);
+        for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
         SDL_RenderPresent(renderer);
     }
 }

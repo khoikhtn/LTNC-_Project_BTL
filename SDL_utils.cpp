@@ -19,43 +19,48 @@ void Sprite(SDL_Rect SpriteClips[])
 {
     SpriteClips[0].x = 0;
     SpriteClips[0].y = 0;
-    SpriteClips[0].w = 90;
-    SpriteClips[0].h = 208;
+    SpriteClips[0].w = 199;
+    SpriteClips[0].h = 262;
 
-    SpriteClips[1].x = 90;
+    SpriteClips[1].x = 201;
     SpriteClips[1].y = 0;
-    SpriteClips[1].w = 90;
-    SpriteClips[1].h = 208;
+    SpriteClips[1].w = 199;
+    SpriteClips[1].h = 262;
 
-    SpriteClips[2].x = 180;
+    SpriteClips[2].x = 401;
     SpriteClips[2].y = 0;
-    SpriteClips[2].w = 90;
-    SpriteClips[2].h = 208;
+    SpriteClips[2].w = 199;
+    SpriteClips[2].h = 262;
 
-    SpriteClips[3].x = 270;
+    SpriteClips[3].x = 601;
     SpriteClips[3].y = 0;
-    SpriteClips[3].w = 90;
-    SpriteClips[3].h = 208;
+    SpriteClips[3].w = 199;
+    SpriteClips[3].h = 262;
 
-    SpriteClips[4].x = 360;
+    SpriteClips[4].x = 801;//Knight's jump
     SpriteClips[4].y = 0;
-    SpriteClips[4].w = 90;
-    SpriteClips[4].h = 208;
+    SpriteClips[4].w = 199;
+    SpriteClips[4].h = 262;
 
-    SpriteClips[5].x = 450;
+    SpriteClips[5].x = 1001;//Knight's standing
     SpriteClips[5].y = 0;
-    SpriteClips[5].w = 90;
-    SpriteClips[5].h = 208;
+    SpriteClips[5].w = 199;
+    SpriteClips[5].h = 262;
 
-    SpriteClips[6].x = 540;//Monster being hit || Knight's jump
+    SpriteClips[6].x = 1201;
     SpriteClips[6].y = 0;
-    SpriteClips[6].w = 90;
-    SpriteClips[6].h = 208;
+    SpriteClips[6].w = 199;
+    SpriteClips[6].h = 262;
 
-    SpriteClips[7].x = 0;//Empty Space
+    SpriteClips[7].x = 1401;//Knight's attack
     SpriteClips[7].y = 0;
-    SpriteClips[7].w = 1;
-    SpriteClips[7].h = 1;
+    SpriteClips[7].w = 199;
+    SpriteClips[7].h = 262;
+
+    SpriteClips[8].x = 1601;
+    SpriteClips[8].y = 0;
+    SpriteClips[8].w = 299;
+    SpriteClips[8].h = 262;
 
 }
 

@@ -19,17 +19,18 @@ class Knight
         SDL_Rect health = {0, 0, 50, 3};
 
         int frame = 0;
-        int mPosX = 0, mPosY = 150;
+        int standing = 100;
+        int mPosX = 0, mPosY = 110;
         int mVelX = 0, mVelY = 0;
 
         void loadtexture(string path_right, string path_left, SDL_Renderer* renderer);
         void handleEvent(SDL_Event &e, SDL_Rect SpriteClips[], Monster monster[], SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT);
-        void move(SDL_Event &e);
+        void move(SDL_Event &e, SDL_Rect SpiteClips[]);
 
         void hits_monster_status(Monster &monster, SDL_Rect SpriteClips[]);//Chém quái
         void being_hit_status(Monster &monster, SDL_Rect SpriteClips[]);//Bị đấm
 
-        void render(int camX, int camY, SDL_Renderer* renderer);
+        void render(int camX, int camY, SDL_Renderer* renderer, SDL_Rect SpriteCLips[]);
 };
 
 #endif

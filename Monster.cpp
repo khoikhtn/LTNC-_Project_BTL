@@ -4,7 +4,7 @@
 
 #include "Monster.h"
 
-void Monster::loadtexture(string path_right, string path_left, SDL_Renderer* renderer)
+void Monster::loadtexture(SDL_Renderer* renderer)
 {
     SDL_Surface* loadedSurface = IMG_Load(path_right.c_str());
     SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0xFF));
@@ -21,17 +21,17 @@ void Monster::loadtexture(string path_right, string path_left, SDL_Renderer* ren
 
 void Monster::move(int knight_mPosX, SDL_Rect SpriteClips[])
 {
-    if(knight_mPosX < mPosX)
+    if(knight_mPosX + 20 < mPosX)
     {
         mTexture = left;
-        if(mPosX - knight_mPosX <= 400 && mPosX - knight_mPosX >= 45)
+        if(mPosX - knight_mPosX <= 300 && mPosX - knight_mPosX >= 90)
         {
             mPosX--;
-            currentClip = &SpriteClips[frame/4];
+            currentClip = &SpriteClips[frame/10];
             frame++;
-            if(frame/4 >= 4) frame = 0;
+            if(frame/10 >= 4) frame = 0;
         }
-        if(mPosX - knight_mPosX < 45)
+        if(mPosX - knight_mPosX < 90)
         {
             currentClip = &SpriteClips[fight_scene/50];
             fight_scene++;
@@ -41,14 +41,14 @@ void Monster::move(int knight_mPosX, SDL_Rect SpriteClips[])
     else
     {
         mTexture = right;
-        if(knight_mPosX - mPosX >= 40 && knight_mPosX - mPosX <= 400)
+        if(knight_mPosX - mPosX >= 10 && knight_mPosX - mPosX <= 400)
         {
             mPosX++;
-            currentClip = &SpriteClips[frame/4];
+            currentClip = &SpriteClips[frame/10];
             frame++;
-            if(frame/4 >= 4) frame = 0;
+            if(frame/10 >= 4) frame = 0;
         }
-        if(knight_mPosX - mPosX < 40)
+        if(knight_mPosX - mPosX < 10)
         {
             currentClip = &SpriteClips[fight_scene/50];
             fight_scene++;
@@ -61,7 +61,7 @@ void Monster::move(int knight_mPosX, SDL_Rect SpriteClips[])
 void Monster::render(int camX, int camY, SDL_Renderer* renderer)
 {
     health.x = mPosX - health.w/2 + currentClip->w/2 - camX;
-    health.y = mPosY + 80;
+    health.y = mPosY + 120;
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderFillRect(renderer, &health);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);

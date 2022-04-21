@@ -10,7 +10,7 @@ using namespace std;
 const int LEVEL_WIDTH = 2000;
 const int LEVEL_HEIGHT = 400;
 
-const int SCREEN_WIDTH = 640;
+const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 480;
 
 const int NUMBERS_OF_MONSTERS = 4;
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     knight.render(0, 0, renderer, SpriteCLips);
 
     Monster monster[4];
-    for(int i=0; i<=3; i++)
+    for(int i=0; i<=1; i++)
     {
         monster[i].path_left = "bigguy1.png";
         monster[i].path_right = "bigguy2.png";
@@ -40,9 +40,19 @@ int main(int argc, char* argv[])
         monster[i].currentClip = &SpriteCLips[0];
         monster[i].render(0, 0, renderer);
     }
-    monster[1].mPosX = 800;
-    //monster[2].mPosX = 700;
-    //monster[3].mPosX = 900;
+
+    for(int i=2; i<=3; i++)
+    {
+        monster[i].path_left = "monster1.png";
+        monster[i].path_right = "monster2.png";
+        monster[i].loadtexture(renderer);
+        monster[i].currentClip = &SpriteCLips[0];
+        monster[i].render(0, 0, renderer);
+    }
+    monster[0].mPosX = 1600;
+    monster[1].mPosX = 1500;
+    monster[2].mPosX = 600;
+    monster[3].mPosX = 1900;
 
     bool quit = false;
     SDL_Event e;

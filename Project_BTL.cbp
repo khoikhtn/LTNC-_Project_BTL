@@ -31,6 +31,8 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="Boss.cpp" />
+		<Unit filename="Boss.h" />
 		<Unit filename="Knight.cpp" />
 		<Unit filename="Knight.h" />
 		<Unit filename="Monster.cpp" />

@@ -185,14 +185,14 @@ void Knight::being_hit_status(Monster &monster, SDL_Rect SpriteClips[])
 {
     if(mPosX < monster.mPosX)
     {
-        if(monster.mPosX - mPosX > 0 && monster.mPosX - mPosX < 90 && monster.fight_scene == 250)
+        if(monster.mPosX - mPosX > 0 && monster.mPosX - mPosX < 130 && monster.fight_scene == 250)
         {
             if(health.w != 0 && monster.currentClip != &SpriteClips[7]) health.w-=5;
         }
     }
     else
     {
-        if(mPosX - monster.mPosX > 0 && mPosX - monster.mPosX < 50 && monster.fight_scene == 250)
+        if(mPosX - monster.mPosX > 0 && mPosX - monster.mPosX < 90 && monster.fight_scene == 250)
         {
             if(health.w != 0 && monster.currentClip != &SpriteClips[7]) health.w-=5;
         }
@@ -209,12 +209,12 @@ void Knight::render(int camX, int camY, SDL_Renderer* renderer, SDL_Rect SpriteC
 {
     if(mTexture == right)
     {
-        health.x = mPosX - health.w/2 + currentClip->w/2 + 45 - camX;
+        health.x = mPosX - health.w/2 + currentClip->w/2 - 20 - camX;
         if(currentClip == &SpriteClips[8]) health.x -= 50;
     }
     else
     {
-        health.x = mPosX - health.w/2 + currentClip->w/2 + 20 - camX;
+        health.x = mPosX - health.w/2 + currentClip->w/2 - camX;
         if(currentClip == &SpriteClips[8]) health.x -= 50;
     }
 

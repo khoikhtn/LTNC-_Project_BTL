@@ -1,5 +1,5 @@
-#ifndef MONSTER__H_
-#define MONSTER__H_
+#ifndef BOSS__H_
+#define BOSS__H_
 
 #include<iostream>
 #include "Knight.h"
@@ -7,17 +7,18 @@
 using namespace std;
 
 class Knight;
-class Monster
+
+class Boss
 {
     public:
         SDL_Texture* right;
         SDL_Texture* left;
         SDL_Texture* mTexture;
         SDL_Rect* currentClip;
-        SDL_Rect health = {0, 0, 50, 3};
+        SDL_Rect health = {0, 0, 100, 3};
 
-        int frame = 0, fight_scene = 200;
-        int mPosX, mPosY = 190;
+        int frame = 0, fight_scene;
+        int mPosX  = 1000, mPosY = 190;
         string path_right, path_left;
 
         void loadtexture(SDL_Renderer* renderer);

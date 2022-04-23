@@ -49,28 +49,27 @@ int main(int argc, char* argv[])
         monster[i].currentClip = &SpriteCLips[0];
         monster[i].render(0, 0, renderer);
     }
-    monster[0].mPosX = 1600;
-    monster[1].mPosX = 1500;
+    monster[0].mPosX = 900;
+    monster[1].mPosX = 1900;
     monster[2].mPosX = 600;
-    monster[3].mPosX = 1900;
+    monster[3].mPosX = 1500;
 
     bool quit = false;
     SDL_Event e;
-
     while(!quit)
     {
         while(SDL_PollEvent(&e) != 0)
         {
             if(e.type == SDL_QUIT) quit = true;
-            knight.handleEvent(e, SpriteCLips, monster, renderer, mapp, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
-            knight.move(e, SpriteCLips);
         }
-        if(knight.mVelX==0)
+        knight.handleEvent(e, SpriteCLips, monster, renderer, mapp, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
+        if(e.type != SDL_KEYDOWN)
         {
             knight.currentClip = &SpriteCLips[knight.standing/20];
             knight.standing++;
             if(knight.standing/20 > 6) knight.standing = 100;
         }
+
         for(int i=0; i<=3; i++) monster[i].move(knight.mPosX, SpriteCLips);
         for(int i=0; i<=3; i++) knight.being_hit_status(monster[i], SpriteCLips);
         camera.x = knight.mPosX - SCREEN_WIDTH/2;

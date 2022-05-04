@@ -3,12 +3,15 @@
 
 #include<iostream>
 #include<SDL.h>
+
 #include "Monster.h"
+#include "Boss.h"
 #include "SDL_utils.h"
 
 using namespace std;
 
 class Monster;
+class Boss;
 class Knight
 {
     public:
@@ -21,9 +24,11 @@ class Knight
         int frame = 0;
         int standing = 100;
         int mPosX = 0, mPosY = 110;
+        int mVelX = 0;
 
         void loadtexture(string path_right, string path_left, SDL_Renderer* renderer);
-        void handleEvent(SDL_Event &e, SDL_Rect SpriteClips[], Monster monster[], SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT);
+        void handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT);
+        void stand_still(SDL_Event &e);
 
         void hits_monster_status(Monster &monster, SDL_Rect SpriteClips[]);//Chém quái
         void being_hit_status(Monster &monster, SDL_Rect SpriteClips[]);//Bị đấm

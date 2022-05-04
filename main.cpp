@@ -3,6 +3,7 @@
 
 #include "Knight.h"
 #include "Monster.h"
+#include "Boss.h"
 #include "SDL_utils.h"
 
 using namespace std;
@@ -14,17 +15,27 @@ const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 480;
 
 const int NUMBERS_OF_MONSTERS = 4;
+
+void Game(SDL_Window* &window, SDL_Renderer* &renderer);
+void Intro(SDL_Window* &window, SDL_Renderer* &renderer);
+
 int main(int argc, char* argv[])
 {
     SDL_Window* window;
     SDL_Renderer* renderer;
     init(window, renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    SDL_Rect SpriteCLips[10];
+    Intro(window, renderer);
+    //Game(window, renderer);
+}
+
+void Game(SDL_Window* &window, SDL_Renderer* &renderer)
+{
+    SDL_Rect SpriteCLips[12];
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     Sprite(SpriteCLips);
 
-    SDL_Texture* mapp = load_map(renderer, "map.png");
+    SDL_Texture* mapp = load_bg(renderer, "map.png");
 
     Knight knight;
     knight.loadtexture("knight2.png", "knight1.png", renderer);
@@ -50,9 +61,14 @@ int main(int argc, char* argv[])
         monster[i].render(0, 0, renderer);
     }
     monster[0].mPosX = 900;
-    monster[1].mPosX = 1900;
+    monster[1].mPosX = 11900;
     monster[2].mPosX = 600;
-    monster[3].mPosX = 1500;
+    monster[3].mPosX = 11500;
+
+    Boss boss;
+    boss.loadtexture("boss2.png", "boss1.png", renderer);
+    boss.currentClip = &SpriteCLips[0];
+    boss.render(0, 0, renderer);
 
     bool quit = false;
     SDL_Event e;
@@ -61,9 +77,11 @@ int main(int argc, char* argv[])
         while(SDL_PollEvent(&e) != 0)
         {
             if(e.type == SDL_QUIT) quit = true;
+            knight.stand_still(e);
         }
-        knight.handleEvent(e, SpriteCLips, monster, renderer, mapp, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
-        if(e.type != SDL_KEYDOWN)
+        knight.handleEvent(SpriteCLips, monster, boss, renderer, mapp, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
+
+        if(knight.mVelX == 0)
         {
             knight.currentClip = &SpriteCLips[knight.standing/20];
             knight.standing++;
@@ -72,6 +90,7 @@ int main(int argc, char* argv[])
 
         for(int i=0; i<=3; i++) monster[i].move(knight.mPosX, SpriteCLips);
         for(int i=0; i<=3; i++) knight.being_hit_status(monster[i], SpriteCLips);
+
         camera.x = knight.mPosX - SCREEN_WIDTH/2;
         camera.y = knight.mPosX - SCREEN_HEIGHT/2;
 
@@ -92,204 +111,65 @@ int main(int argc, char* argv[])
             camera.y = LEVEL_HEIGHT - camera.h;
         }
 
+        if(boss.enter_boss_stage(knight.mPosX))
+        {
+            boss.move(knight.mPosX, SpriteCLips);
+            camera.x = LEVEL_WIDTH - camera.w;
+            camera.y = LEVEL_HEIGHT - camera.h;
+            if(knight.mPosX <= 905) knight.mPosX+=5;
+        }
+
         render_map(renderer, mapp, camera);
         knight.render(camera.x, camera.y, renderer, SpriteCLips);
         for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
+        boss.render(camera.x, camera.y, renderer);
         SDL_RenderPresent(renderer);
     }
 }
 
-
-/*#include <iostream>
-#include <SDL.h>
-#include<SDL_image.h>
-#include <stdlib.h>
-#include <time.h>
-using namespace std;
-
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
-
-SDL_Window* gWindow = NULL;
-SDL_Renderer *gRenderer = NULL;
-
-void initSDL();
-class cacon;
-class ca{
-    public:
-        void load_anh(string path);
-        void handle_event(SDL_Event &e, SDL_Rect SpriteClips[]);
-        void move(SDL_Event &e,cacon camini, SDL_Rect SpriteClips[]);
-        void render_ca();
-        bool check_collision(cacon camini);
-        int toadox=0;
-        int toadoy=0;
-        int velx=0, vely=0;
-        SDL_Rect *current_clip;
-        int frame =0;
-
-        SDL_Texture *concadan;
-};
-
-class cacon{
-    public:
-        int toadox = SCREEN_WIDTH/2 , toadoy = SCREEN_HEIGHT/2;
-        int frame =0;
-        int speed = 0;
-        SDL_Rect* current_clip;
-        SDL_Texture* mTexture;
-        void load_anh(string path);
-        void move(bool direction);
-        void render();
-};
-bool ca::check_collision(cacon camini){
-    if(toadox + current_clip.w == camini.toadox) return true;
-    return false;
-}
-void cacon::load_anh(string path)
+void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
 {
-    SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-    SDL_SetColorKey(loadedSurface,SDL_TRUE, SDL_MapRGB(loadedSurface->format,0xFF,0xFF,0xFF));
-    mTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
-}
+    SDL_Texture* ingame = load_bg(renderer, "knight1.png");
+    SDL_Texture* button = load_bg(renderer, "playbutton.png");
 
-void cacon::move(bool direction)
-{
-    if(direction){
-        toadox++;
-    }
-    else{
-        toadox--;
-    }
-}
+    SDL_Rect SpriteButs[2];
 
-void cacon::render()
-{
-    SDL_Rect quadrad = {toadox, toadoy, current_clip->w, current_clip->h};
-    SDL_RenderCopy(gRenderer, mTexture, current_clip, &quadrad);
-}
+    SpriteButs[0].x = 0;
+    SpriteButs[0].y = 0;
+    SpriteButs[0].w = 150;
+    SpriteButs[0].h = 80;
 
-void ca::load_anh(string path){
-    SDL_Surface *loadsurface = IMG_Load(path.c_str());
-    SDL_SetColorKey(loadsurface,SDL_TRUE, SDL_MapRGB(loadsurface->format,0xFF,0xFF,0xFF));
-    concadan = SDL_CreateTextureFromSurface(gRenderer,loadsurface);
-}
-void ca::move(SDL_Event &e, cacon camini, SDL_Rect SpriteClips[]){
-    if(e.type == SDL_MOUSEMOTION);
-    else{
-    toadox += velx;
-    toadoy += vely;}
-   if(check_collision(camini)){
-        camini.current_clip = &SpriteClips[6];
-    }
-}
-void ca::render_ca(){
-    SDL_Rect toadoca = {toadox,toadoy,current_clip->w, current_clip->h};
-    SDL_RenderCopy(gRenderer, concadan,current_clip, &toadoca);
-}
-void ca::handle_event(SDL_Event &e, SDL_Rect SpriteClips[]){
-    if(e.type==SDL_KEYDOWN && e.key.repeat==0){
-        switch(e.key.keysym.sym) {
-            case SDLK_RIGHT : velx++; break;
-            case SDLK_LEFT : velx--; break;
-            case SDLK_UP : vely--; break;
-            case SDLK_DOWN : vely ++; break;
-        }
-    }
-    else if(e.type == SDL_KEYUP && e.key.repeat==0){
-        switch(e.key.keysym.sym) {
-            case SDLK_RIGHT : velx--; break;
-            case SDLK_LEFT : velx++; break;
-            case SDLK_UP : vely++; break;
-            case SDLK_DOWN : vely --; break;
-        }
-    }
-    if(e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_LEFT){
-        current_clip = &SpriteClips[frame/3];
-        frame++;
-        if(frame == 9) frame =0;
-    }
-    if(e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_DOWN){
-        current_clip = &SpriteClips[frame/3];
-        frame++;
-        if(frame == 9) frame =0;
-    }
-}
+    SpriteButs[1].x = 150;
+    SpriteButs[1].y = 0;
+    SpriteButs[1].w = 150;
+    SpriteButs[1].h = 80;
 
-void loadBackground(){
-    SDL_Surface *loadsurface = IMG_Load("backgroundocean.jpg");
-    SDL_Texture *background = SDL_CreateTextureFromSurface(gRenderer,loadsurface);
-    SDL_RenderCopy(gRenderer,background,nullptr,nullptr);
-}
-void initSDL()
-{
-    gWindow = SDL_CreateWindow("Big_game_test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(gRenderer);
-}
-int main(int argc, char* argv[])
-{
-    initSDL();
+    SDL_Rect currentButton = SpriteButs[0];
+
     bool quit = false;
     SDL_Event e;
-    SDL_Rect SpriteClips[9];
-    SpriteClips[0].x = 0;
-    SpriteClips[0].y=0;
-    SpriteClips[0].w = 264;
-    SpriteClips[0].h = 161;
-    SpriteClips[1].x = 264;
-    SpriteClips[1].y=0;
-    SpriteClips[1].w = 256;
-    SpriteClips[1].h = 161;
-    SpriteClips[2].x = 520;
-    SpriteClips[2].y = 0;
-    SpriteClips[2].w = 280;
-    SpriteClips[2].h = 161;
+    while(!quit)
+    {
+        while(SDL_PollEvent(&e) != 0)
+        {
+            if(e.type == SDL_QUIT) quit = true;
 
-    SpriteClips[3].x = 0;
-    SpriteClips[3].y = 0;
-    SpriteClips[3].w = 150;
-    SpriteClips[3].h = 205;
+            if(e.type == SDL_MOUSEMOTION)
+            {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
 
-    SpriteClips[4].x = 152;
-    SpriteClips[4].y = 0;
-    SpriteClips[4].w = 150;
-    SpriteClips[4].h = 205;
+                bool inside = true;
+                if(x < 450 || x > 550 || y < 200 || y > 300) inside = false;
 
-    SpriteClips[5].x = 300;
-    SpriteClips[5].y = 0;
-    SpriteClips[5].w = 150;
-    SpriteClips[5].h = 205;
+                if(inside == true) currentButton = SpriteButs[1];
+                else currentButton = SpriteButs[0];
+            }
 
-    SpriteClips[6].x = 0;
-    SpriteClips[6].y = 0;
-    SpriteClips[6].w = 1;
-    SpriteClips[6].h = 1;
-    bool direction = false;
-    ca conca;
-    cacon camini;
-    srand(time(0));
-    int r = rand()%2;
-    if(r == 0) direction = true;
-
-    conca.load_anh("sharkthangrmbg.png");
-    conca.current_clip = &SpriteClips[0];
-
-    camini.load_anh("cadichuyen.png");
-    camini.current_clip = &SpriteClips[3];
-
-    while(!quit){
-        while(SDL_PollEvent(&e)!=0){
-            if(e.type == SDL_QUIT)  quit = true;
-            conca.handle_event(e, SpriteClips);
-            conca.move(e,camini,SpriteClips);
         }
-        //camini.move(direction);
-        SDL_RenderClear(gRenderer);
-        loadBackground();
-        camini.render();
-        conca.render_ca();
-        SDL_RenderPresent(gRenderer);
+        //SDL_RenderCopy(renderer, ingame, NULL, NULL);
+        render_button(renderer, button, currentButton);
+        SDL_RenderPresent(renderer);
     }
-}*/
+}
+

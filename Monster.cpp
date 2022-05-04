@@ -21,7 +21,7 @@ void Monster::loadtexture(SDL_Renderer* renderer)
 
 void Monster::move(int knight_mPosX, SDL_Rect SpriteClips[])
 {
-    if(knight_mPosX + 20 < mPosX)
+    if(knight_mPosX < mPosX)
     {
         mTexture = left;
         if(mPosX - knight_mPosX <= 300 && mPosX - knight_mPosX >= 70)
@@ -71,6 +71,7 @@ void Monster::render(int camX, int camY, SDL_Renderer* renderer)
         else if(mTexture == right) health.x += 20;
         health.y = mPosY + 120;
     }
+
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderFillRect(renderer, &health);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);

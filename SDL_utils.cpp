@@ -62,9 +62,19 @@ void Sprite(SDL_Rect SpriteClips[])
     SpriteClips[8].w = 299;
     SpriteClips[8].h = 262;
 
+    SpriteClips[9].x = 1001; //Boss's launching
+    SpriteClips[9].y = 0;
+    SpriteClips[9].w = 330;
+    SpriteClips[9].h = 262;
+
+    SpriteClips[10].x = 1901;
+    SpriteClips[10].y = 0;
+    SpriteClips[10].w = 199;
+    SpriteClips[10].h = 262;
+
 }
 
-SDL_Texture* load_map(SDL_Renderer* renderer, string path)
+SDL_Texture* load_bg(SDL_Renderer* renderer, string path)
 {
     SDL_Surface* loadedSurface = IMG_Load(path.c_str());
     SDL_Texture* mapp = SDL_CreateTextureFromSurface(renderer, loadedSurface);
@@ -76,4 +86,10 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Rect camera)
 {
     SDL_Rect quadrad = {0, 0, camera.w, camera.h};
     SDL_RenderCopy(renderer, mapp, &camera, &quadrad);
+}
+
+void render_button(SDL_Renderer* renderer, SDL_Texture* button, SDL_Rect currentButton)
+{
+    SDL_Rect quadrad = {450, 200, 100, 100};
+    SDL_RenderCopy(renderer, button, &currentButton, &quadrad);
 }

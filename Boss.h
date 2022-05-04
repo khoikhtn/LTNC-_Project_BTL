@@ -16,12 +16,16 @@ class Boss
         SDL_Texture* mTexture;
         SDL_Rect* currentClip;
         SDL_Rect health = {0, 0, 100, 3};
+        SDL_Rect SpriteClips[10];
 
         int frame = 0, fight_scene;
-        int mPosX  = 1000, mPosY = 190;
-        string path_right, path_left;
+        int mPosX  = 1900, mPosY = 150;
+        int charging = 200;
+        bool charge = false, launch = false;
 
-        void loadtexture(SDL_Renderer* renderer);
+        bool enter_boss_stage(int knight_mPosX);
+
+        void loadtexture(string path_right, string path_left, SDL_Renderer* renderer);
         void move(int knight_mPosX, SDL_Rect SpriteClips[]);
         void render(int camX, int camY, SDL_Renderer* renderer);
 };

@@ -15,7 +15,7 @@
 	<SDL_image.h>
 	"Knight.h"
 
-1651683849 source:d:\22.06.04 uet\code\project_btl\main.cpp
+1651721018 source:d:\22.06.04 uet\code\project_btl\main.cpp
 	<iostream>
 	<SDL.h>
 	"Knight.h"
@@ -30,12 +30,12 @@
 	"Boss.h"
 	"SDL_utils.h"
 
-1651682869 d:\22.06.04 uet\code\project_btl\sdl_utils.h
+1651710385 d:\22.06.04 uet\code\project_btl\sdl_utils.h
 	<SDL.h>
 	<SDL_image.h>
 	<iostream>
 
-1651683066 source:d:\22.06.04 uet\code\project_btl\sdl_utils.cpp
+1651720549 source:d:\22.06.04 uet\code\project_btl\sdl_utils.cpp
 	"SDL_utils.h"
 
 1650580341 d:\22.06.04 uet\code\project_btl\monster.h

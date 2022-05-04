@@ -16,8 +16,8 @@ const int SCREEN_HEIGHT = 480;
 
 const int NUMBERS_OF_MONSTERS = 4;
 
-void Game(SDL_Window* &window, SDL_Renderer* &renderer);
 void Intro(SDL_Window* &window, SDL_Renderer* &renderer);
+void Game(SDL_Window* &window, SDL_Renderer* &renderer);
 
 int main(int argc, char* argv[])
 {
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     init(window, renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     Intro(window, renderer);
-    //Game(window, renderer);
+    Game(window, renderer);
 }
 
 void Game(SDL_Window* &window, SDL_Renderer* &renderer)
@@ -129,7 +129,7 @@ void Game(SDL_Window* &window, SDL_Renderer* &renderer)
 
 void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
 {
-    SDL_Texture* ingame = load_bg(renderer, "knight1.png");
+    SDL_Texture* ingame = load_bg(renderer, "introbg.png");
     SDL_Texture* button = load_bg(renderer, "playbutton.png");
 
     SDL_Rect SpriteButs[2];
@@ -146,9 +146,11 @@ void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
 
     SDL_Rect currentButton = SpriteButs[0];
 
+    bool start = false;
+    bool inside;
     bool quit = false;
     SDL_Event e;
-    while(!quit)
+    while(!quit && !start)
     {
         while(SDL_PollEvent(&e) != 0)
         {
@@ -158,16 +160,18 @@ void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
             {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
-
-                bool inside = true;
-                if(x < 450 || x > 550 || y < 200 || y > 300) inside = false;
+                inside = true;
+                if(x < 430 || x > 580 || y < 200 || y > 280)
+                {
+                    inside = false;
+                }
 
                 if(inside == true) currentButton = SpriteButs[1];
                 else currentButton = SpriteButs[0];
             }
-
         }
-        //SDL_RenderCopy(renderer, ingame, NULL, NULL);
+        if(inside == true && e.type == SDL_MOUSEBUTTONDOWN) start = true;
+        SDL_RenderCopy(renderer, ingame, NULL, NULL);
         render_button(renderer, button, currentButton);
         SDL_RenderPresent(renderer);
     }

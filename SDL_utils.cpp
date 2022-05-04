@@ -2,7 +2,7 @@
 
 void init(SDL_Window* &window, SDL_Renderer* &renderer, int SCREEN_WIDTH, int SCREEN_HEIGHT)
 {
-    window = SDL_CreateWindow("Big_game_test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("A Knight's Tale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
@@ -90,6 +90,6 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Rect camera)
 
 void render_button(SDL_Renderer* renderer, SDL_Texture* button, SDL_Rect currentButton)
 {
-    SDL_Rect quadrad = {450, 200, 100, 100};
+    SDL_Rect quadrad = {430, 200, 150, 80};
     SDL_RenderCopy(renderer, button, &currentButton, &quadrad);
 }

@@ -31,11 +31,17 @@ void Monster::move(int knight_mPosX, SDL_Rect SpriteClips[])
             frame++;
             if(frame/10 >= 4) frame = 0;
         }
-        if(mPosX - knight_mPosX < 70)
+        else if(mPosX - knight_mPosX < 70)
         {
             currentClip = &SpriteClips[fight_scene/50];
             fight_scene++;
             if(fight_scene/50 >= 6) fight_scene = 200;
+        }
+        else
+        {
+            currentClip = &SpriteClips[standing/20];
+            standing++;
+            if(standing/20 > 12) standing = 220;
         }
     }
     else
@@ -48,29 +54,47 @@ void Monster::move(int knight_mPosX, SDL_Rect SpriteClips[])
             frame++;
             if(frame/10 >= 4) frame = 0;
         }
-        if(knight_mPosX - mPosX < 90)
+        else if(knight_mPosX - mPosX < 90)
         {
             currentClip = &SpriteClips[fight_scene/50];
             fight_scene++;
             if(fight_scene/50 >= 6) fight_scene = 200;
         }
+        else
+        {
+            currentClip = &SpriteClips[standing/20];
+            standing++;
+            if(standing/20 > 12) standing = 220;
+        }
     }
-    if(health.w == 0) currentClip = &SpriteClips[7];
+    if(health.w == 0)
+    {
+        currentClip = &SpriteClips[13];
+        health_border.w = 0;
+    }
 }
 
 void Monster::render(int camX, int camY, SDL_Renderer* renderer)
 {
-    health.x = mPosX - health.w/2 + currentClip->w/2 - camX;
+    health.x = mPosX + currentClip->w/2 - camX;
     if(path_right == "bigguy2.png" && path_left == "bigguy1.png")
     {
+        health.x -= 30;
         health.y = mPosY + 40;
     }
     else if(path_right == "monster2.png" && path_left == "monster1.png")
     {
-        if(mTexture == left) health.x -= 35;
-        else if(mTexture == right) health.x += 20;
+        if(mTexture == left) health.x -= 55;
+        else if(mTexture == right) health.x -= 10;
+
         health.y = mPosY + 120;
     }
+
+    health_border.x = health.x - 2;
+    health_border.y = health.y - 1;
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderFillRect(renderer, &health_border);
 
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderFillRect(renderer, &health);

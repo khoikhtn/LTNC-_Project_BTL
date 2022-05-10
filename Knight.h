@@ -19,6 +19,7 @@ class Knight
         SDL_Texture* left;
         SDL_Texture* mTexture;
         SDL_Rect* currentClip;
+        SDL_Rect health_border = {0, 0, 54, 5};
         SDL_Rect health = {0, 0, 50, 3};
 
         int frame = 0;
@@ -27,11 +28,14 @@ class Knight
         int mVelX = 0;
 
         void loadtexture(string path_right, string path_left, SDL_Renderer* renderer);
-        void handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT);
+        void handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT);
         void stand_still(SDL_Event &e);
 
         void hits_monster_status(Monster &monster, SDL_Rect SpriteClips[]);//Chém quái
-        void being_hit_status(Monster &monster, SDL_Rect SpriteClips[]);//Bị đấm
+        void being_hit_status(Monster &monster, SDL_Rect SpriteClips[]);//Bị quái đấm
+
+        void hits_boss_status(Boss &boss ,SDL_Rect SpriteClips[]);//Chém boss
+        void being_hit_by_boss_status(Boss &boss, SDL_Rect SpriteClips[]);//Bị boss đấm
 
         void render(int camX, int camY, SDL_Renderer* renderer, SDL_Rect SpriteCLips[]);
 };

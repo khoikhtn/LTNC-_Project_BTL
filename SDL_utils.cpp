@@ -42,7 +42,7 @@ void Sprite(SDL_Rect SpriteClips[])
     SpriteClips[4].w = 199;
     SpriteClips[4].h = 262;
 
-    SpriteClips[5].x = 1001;//Knight's standing
+    SpriteClips[5].x = 1001;//Knight's stand still
     SpriteClips[5].y = 0;
     SpriteClips[5].w = 199;
     SpriteClips[5].h = 262;
@@ -64,13 +64,28 @@ void Sprite(SDL_Rect SpriteClips[])
 
     SpriteClips[9].x = 1001; //Boss's launching
     SpriteClips[9].y = 0;
-    SpriteClips[9].w = 330;
+    SpriteClips[9].w = 329;
     SpriteClips[9].h = 262;
 
-    SpriteClips[10].x = 1901;
+    SpriteClips[10].x = 1901; //Knight's Sliding
     SpriteClips[10].y = 0;
     SpriteClips[10].w = 199;
     SpriteClips[10].h = 262;
+
+    SpriteClips[11].x = 1401; //Monster's stand still and Boss's stunt
+    SpriteClips[11].y = 0;
+    SpriteClips[11].w = 199;
+    SpriteClips[11].h = 262;
+
+    SpriteClips[12].x = 1601;
+    SpriteClips[12].y = 0;
+    SpriteClips[12].w = 199;
+    SpriteClips[12].h = 262;
+
+    SpriteClips[13].x = 0;//Empty Space
+    SpriteClips[13].y = 0;
+    SpriteClips[13].w = 1;
+    SpriteClips[13].h = 1;
 
 }
 
@@ -88,8 +103,23 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Rect camera)
     SDL_RenderCopy(renderer, mapp, &camera, &quadrad);
 }
 
-void render_button(SDL_Renderer* renderer, SDL_Texture* button, SDL_Rect currentButton)
+void render_start_button(SDL_Renderer* renderer, SDL_Texture* button, SDL_Rect currentButton)
 {
     SDL_Rect quadrad = {430, 200, 150, 80};
     SDL_RenderCopy(renderer, button, &currentButton, &quadrad);
+}
+
+void render_play_again_button(SDL_Renderer* renderer, SDL_Texture* button1, SDL_Texture* button2, SDL_Rect currentButton1, SDL_Rect currentButton2)
+{
+    SDL_Rect quadrad1 = {430, 200, 150, 80};
+    SDL_RenderCopy(renderer, button1, &currentButton1, &quadrad1);
+
+    SDL_Rect quadrad2 = {430, 300, 150, 80};
+    SDL_RenderCopy(renderer, button2, &currentButton2, &quadrad2);
+}
+
+void render_items(SDL_Renderer* renderer, SDL_Texture* item, int camX)
+{
+    SDL_Rect quadrad = {900 - camX, 330, 80, 50};
+    SDL_RenderCopy(renderer, item, NULL, &quadrad);
 }

@@ -28,31 +28,27 @@ bool Boss::enter_boss_stage(int knight_mPosX)
 
 void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
 {
-    if(knight_mPosX < mPosX && charge == false)
+    if(knight_mPosX < mPosX && charge == false && stunt == false)
     {
         mTexture = left;
-        if(mPosX - knight_mPosX >= 20)
-        {
-            mPosX--;
-            currentClip = &SpriteClips[frame/10];
-            frame++;
-            if(frame/10 >= 4) frame = 0;
+        mPosX--;
+        currentClip = &SpriteClips[frame/10];
+        frame++;
+        if(frame/10 >= 4) frame = 0;
         }
-    }
 
-    else if(knight_mPosX >= mPosX && charge == false)
+
+    else if(knight_mPosX >= mPosX && charge == false && stunt == false)
     {
         mTexture = right;
-        if(knight_mPosX - mPosX >= 20)
-        {
-            mPosX++;
-            currentClip = &SpriteClips[frame/10];
-            frame++;
-            if(frame/10 >= 4) frame = 0;
-        }
-    }
+       mPosX++;
+        currentClip = &SpriteClips[frame/10];
+        frame++;
+        if(frame/10 >= 4) frame = 0;
 
-    if(launch == true)
+    }
+    //Launching
+    if(launch == true && stunt == false)
     {
         currentClip = &SpriteClips[9];
         if(mTexture == left)
@@ -64,6 +60,7 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
                 charge = false;
                 currentClip = &SpriteClips[0];
                 charging = 200;
+                counting++;
             }
         }
         else if(mTexture == right)
@@ -75,11 +72,12 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
                 charge = false;
                 currentClip = &SpriteClips[0];
                 charging = 200;
+                counting++;
             }
         }
     }
-
-    else if((abs(mPosX - knight_mPosX) >= 300 && abs(mPosX - knight_mPosX) <= 304) || charge == true)
+    //Charging
+    else if((abs(mPosX - knight_mPosX) <= 300 || charge == true) && stunt == false)
     {
         charge = true;
         currentClip = &SpriteClips[charging/50];
@@ -88,17 +86,46 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         if(charging/50 > 4)
         {
             launch = true;
-            if(mTexture == right) mPosX+=100;
-            else mPosX-=100;
+            if(mTexture == right) mPosX+=50;
+            else mPosX-=50;
             mPosY = 150;
+        }
+    }
+
+    //Stunning
+    if(counting == 3 || stunt == true)
+    {
+        if(counting == 3 && stunning == 110 && mTexture == right) mTexture = left;
+        else if(counting == 3 && stunning == 110 && mTexture == left) mTexture = right;
+
+        mPosY = 190;
+        stunt = true;
+        currentClip = &SpriteClips[stunning/10];
+        stunning++;
+        if(stunning/10 > 12)
+        {
+            stunning = 110;
+            counting++;
+        }
+        if(counting == 15)
+        {
+            mPosY = 150;
+            stunt = false;
+            counting = 0;
         }
     }
 }
 
 void Boss::render(int camX, int camY, SDL_Renderer* renderer)
 {
-    health.x = mPosX - health.w/2 + currentClip->w/2 - camX;
+    health.x = mPosX + currentClip->w/2 - 100 - camX;
     health.y = mPosY;
+
+    health_border.x = health.x - 2;
+    health_border.y = health.y - 1;
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderFillRect(renderer, &health_border);
 
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderFillRect(renderer, &health);

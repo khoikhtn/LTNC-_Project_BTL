@@ -15,13 +15,15 @@ class Boss
         SDL_Texture* left;
         SDL_Texture* mTexture;
         SDL_Rect* currentClip;
-        SDL_Rect health = {0, 0, 100, 3};
+        SDL_Rect health_border = {0, 0, 204, 5};
+        SDL_Rect health = {0, 0, 200, 3};
         SDL_Rect SpriteClips[10];
 
         int frame = 0, fight_scene;
         int mPosX  = 1900, mPosY = 150;
-        int charging = 200;
-        bool charge = false, launch = false;
+        int charging = 200, stunning = 110, counting = 0;
+
+        bool charge = false, launch = false, stunt = false;
 
         bool enter_boss_stage(int knight_mPosX);
 

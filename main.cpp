@@ -17,7 +17,8 @@ const int SCREEN_HEIGHT = 480;
 const int NUMBERS_OF_MONSTERS = 4;
 
 void Intro(SDL_Window* &window, SDL_Renderer* &renderer);
-void Game(SDL_Window* &window, SDL_Renderer* &renderer);
+int Game(SDL_Window* &window, SDL_Renderer* &renderer);
+bool play_again(SDL_Window* &window, SDL_Renderer* &renderer, int k);
 
 int main(int argc, char* argv[])
 {
@@ -25,13 +26,19 @@ int main(int argc, char* argv[])
     SDL_Renderer* renderer;
     init(window, renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    Intro(window, renderer);
-    Game(window, renderer);
+    //Intro(window, renderer);
+    while(true)
+    {
+        int k = Game(window, renderer);
+        if( play_again(window, renderer, k)) continue;
+        else break;
+    }
+    quitSDL(window, renderer);
 }
 
-void Game(SDL_Window* &window, SDL_Renderer* &renderer)
+int Game(SDL_Window* &window, SDL_Renderer* &renderer)
 {
-    SDL_Rect SpriteCLips[12];
+    SDL_Rect SpriteCLips[15];
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     Sprite(SpriteCLips);
 
@@ -62,13 +69,16 @@ void Game(SDL_Window* &window, SDL_Renderer* &renderer)
     }
     monster[0].mPosX = 900;
     monster[1].mPosX = 11900;
-    monster[2].mPosX = 600;
+    monster[2].mPosX = 500;
     monster[3].mPosX = 11500;
 
     Boss boss;
     boss.loadtexture("boss2.png", "boss1.png", renderer);
     boss.currentClip = &SpriteCLips[0];
     boss.render(0, 0, renderer);
+
+    SDL_Texture* health = load_bg(renderer, "health.png");
+    bool health_eaten = false;
 
     bool quit = false;
     SDL_Event e;
@@ -79,9 +89,9 @@ void Game(SDL_Window* &window, SDL_Renderer* &renderer)
             if(e.type == SDL_QUIT) quit = true;
             knight.stand_still(e);
         }
-        knight.handleEvent(SpriteCLips, monster, boss, renderer, mapp, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
+        knight.handleEvent(SpriteCLips, monster, boss, renderer, mapp, health, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
 
-        if(knight.mVelX == 0)
+        if(knight.mVelX == 0)// Knight's standstill
         {
             knight.currentClip = &SpriteCLips[knight.standing/20];
             knight.standing++;
@@ -90,6 +100,7 @@ void Game(SDL_Window* &window, SDL_Renderer* &renderer)
 
         for(int i=0; i<=3; i++) monster[i].move(knight.mPosX, SpriteCLips);
         for(int i=0; i<=3; i++) knight.being_hit_status(monster[i], SpriteCLips);
+        knight.being_hit_by_boss_status(boss, SpriteCLips);
 
         camera.x = knight.mPosX - SCREEN_WIDTH/2;
         camera.y = knight.mPosX - SCREEN_HEIGHT/2;
@@ -119,18 +130,39 @@ void Game(SDL_Window* &window, SDL_Renderer* &renderer)
             if(knight.mPosX <= 905) knight.mPosX+=5;
         }
 
+        if(knight.mPosX >= 850 && knight.mPosX <= 1200 && health_eaten == false)
+        {
+            SDL_DestroyTexture(health);
+            if(knight.health.w <= 45) knight.health.w +=10;
+            else knight.health.w = 50;
+            health_eaten = true;
+        }
+
+        if(knight.health.w == 0)
+        {
+            return 0;
+        }
+        if(boss.health.w == 0)
+        {
+            return 1;
+        }
+
+
+        SDL_RenderClear(renderer);
         render_map(renderer, mapp, camera);
+        render_items(renderer, health, camera.x);
         knight.render(camera.x, camera.y, renderer, SpriteCLips);
         for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
         boss.render(camera.x, camera.y, renderer);
+
         SDL_RenderPresent(renderer);
     }
 }
 
 void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
 {
-    SDL_Texture* ingame = load_bg(renderer, "introbg.png");
-    SDL_Texture* button = load_bg(renderer, "playbutton.png");
+    SDL_Texture* ingamebg = load_bg(renderer, "introbg.png");
+    SDL_Texture* play_button = load_bg(renderer, "playbutton.png");
 
     SDL_Rect SpriteButs[2];
 
@@ -171,8 +203,80 @@ void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
             }
         }
         if(inside == true && e.type == SDL_MOUSEBUTTONDOWN) start = true;
-        SDL_RenderCopy(renderer, ingame, NULL, NULL);
-        render_button(renderer, button, currentButton);
+        SDL_RenderCopy(renderer, ingamebg, NULL, NULL);
+        render_start_button(renderer, play_button, currentButton);
+        SDL_RenderPresent(renderer);
+    }
+}
+
+bool play_again(SDL_Window* &window, SDL_Renderer* &renderer, int k)
+{
+    SDL_Texture* game_over_bg;
+    if(k == 0) game_over_bg = load_bg(renderer, "gobg.png");
+    else if(k == 1) game_over_bg = load_bg(renderer, "victorybg.png");
+    SDL_Texture* play_again_button = load_bg(renderer, "pabt.png");
+    SDL_Texture* quit_button = load_bg(renderer, "qb.png");
+
+    SDL_Rect SpriteButs[2];
+
+    SpriteButs[0].x = 0;
+    SpriteButs[0].y = 0;
+    SpriteButs[0].w = 150;
+    SpriteButs[0].h = 80;
+
+    SpriteButs[1].x = 150;
+    SpriteButs[1].y = 0;
+    SpriteButs[1].w = 150;
+    SpriteButs[1].h = 80;
+
+    SDL_Rect current_pab = SpriteButs[0];
+    SDL_Rect current_gob = SpriteButs[0];
+
+    bool inside_pa, inside_quit;
+    bool quit = false;
+
+    SDL_Event e;
+    while(!quit)
+    {
+        while(SDL_PollEvent(&e) != 0)
+        {
+            if(e.type == SDL_QUIT) quit = true;
+
+            if(e.type == SDL_MOUSEMOTION)
+            {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                inside_pa = true;
+                inside_quit = true;
+
+                if(x < 430 || x > 580 || y < 200 || y > 280)
+                {
+                    inside_pa = false;
+                }
+
+                if(x < 430 || x > 580 || y < 300 || y > 380)
+                {
+                    inside_quit = false;
+                }
+
+                if(inside_pa == true) current_pab = SpriteButs[1];
+                else current_pab = SpriteButs[0];
+
+                if(inside_quit == true) current_gob = SpriteButs[1];
+                else current_gob = SpriteButs[0];
+            }
+        }
+        if(inside_pa == true && e.type == SDL_MOUSEBUTTONDOWN)
+        {
+            return true;
+        }
+        else if(inside_quit == true && e.type == SDL_MOUSEBUTTONDOWN)
+        {
+            return false;
+        }
+
+        SDL_RenderCopy(renderer, game_over_bg, NULL, NULL);
+        render_play_again_button(renderer, play_again_button, quit_button, current_pab, current_gob);
         SDL_RenderPresent(renderer);
     }
 }

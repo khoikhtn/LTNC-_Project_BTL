@@ -14,9 +14,12 @@ class Monster
         SDL_Texture* left;
         SDL_Texture* mTexture;
         SDL_Rect* currentClip;
+        SDL_Rect health_border = {0, 0, 54, 5};
         SDL_Rect health = {0, 0, 50, 3};
 
         int frame = 0, fight_scene = 200;
+        int standing = 220;
+
         int mPosX, mPosY = 190;
         string path_right, path_left;
 

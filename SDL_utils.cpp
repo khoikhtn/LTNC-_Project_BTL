@@ -87,11 +87,27 @@ void Sprite(SDL_Rect SpriteClips[])
     SpriteClips[13].w = 1;
     SpriteClips[13].h = 1;
 
+    SpriteClips[14].x = 2101;//Super attack
+    SpriteClips[14].y = 0;
+    SpriteClips[14].w = 199;
+    SpriteClips[14].h = 262;
+
+    SpriteClips[15].x = 2301;
+    SpriteClips[15].y = 0;
+    SpriteClips[15].w = 199;
+    SpriteClips[15].h = 262;
+
+    SpriteClips[16].x = 2501;
+    SpriteClips[16].y = 0;
+    SpriteClips[16].w = 299;
+    SpriteClips[16].h = 262;
+
 }
 
 SDL_Texture* load_bg(SDL_Renderer* renderer, string path)
 {
     SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+    SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0xFF));
     SDL_Texture* mapp = SDL_CreateTextureFromSurface(renderer, loadedSurface);
     SDL_FreeSurface(loadedSurface);
     return mapp;
@@ -116,6 +132,24 @@ void render_play_again_button(SDL_Renderer* renderer, SDL_Texture* button1, SDL_
 
     SDL_Rect quadrad2 = {430, 300, 150, 80};
     SDL_RenderCopy(renderer, button2, &currentButton2, &quadrad2);
+}
+
+int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Texture* superslash_r, int frame, bool direction)
+{
+    if(direction == false)
+    {
+        SDL_Rect quadrad = {frame - 300, 200, 251, 262};
+        SDL_RenderCopy(renderer, superslash_l, NULL, &quadrad);
+        frame-=4;
+    }
+    else
+    {
+        SDL_Rect quadrad = {frame - 150, 200, 251, 262};
+        SDL_RenderCopy(renderer, superslash_r, NULL, &quadrad);
+        frame+=4;
+    }
+
+    return frame;
 }
 
 void render_items(SDL_Renderer* renderer, SDL_Texture* item, int camX)

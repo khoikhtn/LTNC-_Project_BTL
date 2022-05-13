@@ -38,11 +38,11 @@ int main(int argc, char* argv[])
 
 int Game(SDL_Window* &window, SDL_Renderer* &renderer)
 {
-    SDL_Rect SpriteCLips[15];
+    SDL_Rect SpriteCLips[20];
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     Sprite(SpriteCLips);
 
-    SDL_Texture* mapp = load_bg(renderer, "map.png");
+    SDL_Texture* mapp = load_bg(renderer, "background.jpg");
 
     Knight knight;
     knight.loadtexture("knight2.png", "knight1.png", renderer);
@@ -80,6 +80,9 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
     SDL_Texture* health = load_bg(renderer, "health.png");
     bool health_eaten = false;
 
+    SDL_Texture* superslash_right = load_bg(renderer, "superslash1.png");
+    SDL_Texture* superslash_left = load_bg(renderer, "superslash2.png");
+
     bool quit = false;
     SDL_Event e;
     while(!quit)
@@ -89,7 +92,7 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
             if(e.type == SDL_QUIT) quit = true;
             knight.stand_still(e);
         }
-        knight.handleEvent(SpriteCLips, monster, boss, renderer, mapp, health, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
+        knight.handleEvent(SpriteCLips, monster, boss, renderer, mapp, health, superslash_left, superslash_right, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
 
         if(knight.mVelX == 0)// Knight's standstill
         {
@@ -103,7 +106,7 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         knight.being_hit_by_boss_status(boss, SpriteCLips);
 
         camera.x = knight.mPosX - SCREEN_WIDTH/2;
-        camera.y = knight.mPosX - SCREEN_HEIGHT/2;
+        camera.y = knight.mPosY - SCREEN_HEIGHT/2;
 
         if(camera.x < 0)
         {
@@ -122,7 +125,7 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
             camera.y = LEVEL_HEIGHT - camera.h;
         }
 
-        if(boss.enter_boss_stage(knight.mPosX))
+        if(boss.enter_boss_stage(knight.mPosX))//Enter boss stage
         {
             boss.move(knight.mPosX, SpriteCLips);
             camera.x = LEVEL_WIDTH - camera.w;
@@ -130,10 +133,10 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
             if(knight.mPosX <= 905) knight.mPosX+=5;
         }
 
-        if(knight.mPosX >= 850 && knight.mPosX <= 1200 && health_eaten == false)
+        if(knight.mPosX >= 850 && knight.mPosX <= 1200 && health_eaten == false)//Health boost
         {
             SDL_DestroyTexture(health);
-            if(knight.health.w <= 45) knight.health.w +=10;
+            if(knight.health.w <= 40) knight.health.w +=10;
             else knight.health.w = 50;
             health_eaten = true;
         }
@@ -147,11 +150,11 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
             return 1;
         }
 
-
         SDL_RenderClear(renderer);
         render_map(renderer, mapp, camera);
         render_items(renderer, health, camera.x);
         knight.render(camera.x, camera.y, renderer, SpriteCLips);
+        knight.slash_frame = render_super_slash(renderer, superslash_left, superslash_right, knight.slash_frame, knight.direction);
         for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
         boss.render(camera.x, camera.y, renderer);
 
@@ -203,6 +206,7 @@ void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
             }
         }
         if(inside == true && e.type == SDL_MOUSEBUTTONDOWN) start = true;
+        SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, ingamebg, NULL, NULL);
         render_start_button(renderer, play_button, currentButton);
         SDL_RenderPresent(renderer);
@@ -275,6 +279,7 @@ bool play_again(SDL_Window* &window, SDL_Renderer* &renderer, int k)
             return false;
         }
 
+        SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, game_over_bg, NULL, NULL);
         render_play_again_button(renderer, play_again_button, quit_button, current_pab, current_gob);
         SDL_RenderPresent(renderer);

@@ -1,7 +1,3 @@
-#include<iostream>
-#include<SDL.h>
-#include<SDL_image.h>
-
 #include "Knight.h"
 
 void Knight::loadtexture(string path_right, string path_left, SDL_Renderer* renderer)
@@ -20,7 +16,7 @@ void Knight::loadtexture(string path_right, string path_left, SDL_Renderer* rend
 
 }
 
-void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT)
+void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Texture* superslash_left, SDL_Texture* superslash_right, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT)
 {
     const Uint8* keystates = SDL_GetKeyboardState(NULL);
 
@@ -85,6 +81,7 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
             render_map(renderer, mapp, camera);
             render_items(renderer, item, camera.x);
             this->render(camera.x, camera.y, renderer, SpriteClips);
+            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, direction);
             for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
             boss.render(camera.x, camera.y, renderer);
             SDL_RenderPresent(renderer);
@@ -128,6 +125,7 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
             render_map(renderer, mapp, camera);
             render_items(renderer, item, camera.x);
             this->render(camera.x, camera.y, renderer, SpriteClips);
+            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, direction);
             for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
             boss.render(camera.x, camera.y, renderer);
             SDL_RenderPresent(renderer);
@@ -158,6 +156,7 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
             render_map(renderer, mapp, camera);
             render_items(renderer, item, camera.x);
             this->render(camera.x, camera.y, renderer, SpriteClips);
+            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, direction);
             for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
             boss.render(camera.x, camera.y, renderer);
             SDL_RenderPresent(renderer);
@@ -206,10 +205,46 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
             render_map(renderer, mapp, camera);
             render_items(renderer, item, camera.x);
             this->render(camera.x, camera.y, renderer, SpriteClips);
+            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, direction);
             for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
             boss.render(camera.x, camera.y, renderer);
             SDL_RenderPresent(renderer);
         }
+    }
+
+    //Special Attack
+    if(keystates[SDL_SCANCODE_X] && power.w == 50)
+    {
+        if(mTexture == left) direction = false;
+        else direction = true;
+
+        slash_frame = mPosX + currentClip->w - camera.x;
+        int special_attack = 140;
+        while(special_attack/10 <= 16)
+        {
+            currentClip = &SpriteClips[special_attack/10];
+            for(int i=0; i<=3; i++) monster[i].move(mPosX, SpriteClips);
+            for(int i=0; i<=3; i++) this->hits_monster_status(monster[i], SpriteClips);
+            this->hits_boss_status(boss, SpriteClips);
+
+            if(boss.enter_boss_stage(mPosX))
+            {
+                boss.move(mPosX, SpriteClips);
+                camera.x = LEVEL_WIDTH - camera.w;
+                camera.y = LEVEL_HEIGHT - camera.h;
+                if(mPosX <= 900) mPosX+=2;
+            }
+
+            SDL_RenderClear(renderer);
+            render_map(renderer, mapp, camera);
+            render_items(renderer, item, camera.x);
+            this->render(camera.x, camera.y, renderer, SpriteClips);
+            for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
+            boss.render(camera.x, camera.y, renderer);
+            SDL_RenderPresent(renderer);
+            special_attack++;
+        }
+        power.w = 0;
     }
 }
 
@@ -242,7 +277,11 @@ void Knight::hits_monster_status(Monster &monster, SDL_Rect SpriteClips[])
             if(monster.path_right == "monster2.png" && monster.path_left == "monster1.png") monster.currentClip = &SpriteClips[6];
             if(monster.path_right == "monster2.png" && monster.path_left == "monster1.png") monster.mPosX+=3;
 
-            if(monster.health.w != 0) monster.health.w--;
+            if(monster.health.w != 0)
+            {
+                monster.health.w--;
+                if(power.w < 50) power.w++;
+            }
             else monster.currentClip = &SpriteClips[13];
         }
     }
@@ -253,7 +292,11 @@ void Knight::hits_monster_status(Monster &monster, SDL_Rect SpriteClips[])
             if(monster.path_right == "monster2.png" && monster.path_left == "monster1.png") monster.currentClip = &SpriteClips[6];
             if(monster.path_right == "monster2.png" && monster.path_left == "monster1.png") monster.mPosX-=3;
 
-            if(monster.health.w != 0) monster.health.w--;
+            if(monster.health.w != 0)
+            {
+                monster.health.w--;
+                if(power.w < 50) power.w++;
+            }
             else monster.currentClip = &SpriteClips[13];
         }
     }
@@ -317,6 +360,8 @@ void Knight::being_hit_by_boss_status(Boss &boss, SDL_Rect SpriteClips[])
 
 void Knight::render(int camX, int camY, SDL_Renderer* renderer, SDL_Rect SpriteClips[])
 {
+
+    //Health
     if(mTexture == right)
     {
         health.x = mPosX + currentClip->w/2 - 50 - camX;
@@ -339,6 +384,19 @@ void Knight::render(int camX, int camY, SDL_Renderer* renderer, SDL_Rect SpriteC
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     SDL_RenderFillRect(renderer, &health);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    //Power bar
+    power.x = health.x;
+    power.y = health.y - 10;
+
+    power_border.x = power.x - 2;
+    power_border.y = power.y -1;
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderFillRect(renderer, &power_border);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
+    SDL_RenderFillRect(renderer, &power);
 
     SDL_Rect quadrad = {mPosX - camX, mPosY - camY, currentClip->w, currentClip->h};
     SDL_RenderCopy(renderer, mTexture, currentClip, &quadrad);

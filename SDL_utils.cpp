@@ -134,19 +134,38 @@ void render_play_again_button(SDL_Renderer* renderer, SDL_Texture* button1, SDL_
     SDL_RenderCopy(renderer, button2, &currentButton2, &quadrad2);
 }
 
-int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Texture* superslash_r, int frame, bool direction)
+int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Texture* superslash_r, int frame, int dis, bool direction, int camX, Monster monster[])
 {
     if(direction == false)
     {
-        SDL_Rect quadrad = {frame - 300, 200, 251, 262};
+        SDL_Rect quadrad = {frame - 300 - camX, 200, 251, 262};
         SDL_RenderCopy(renderer, superslash_l, NULL, &quadrad);
         frame-=4;
+        for(int i=0; i<=9; i++)
+        {
+            if(quadrad.x - monster[i].mPosX + camX  >= 0 && quadrad.x - monster[i].mPosX +camX <= 5)
+            {
+                if(monster[i].health.w >= 10) monster[i].health.w-=10;
+                else monster[i].health.w = 0;
+            }
+        }
+        if(abs(frame - dis) >= 500) frame = -100;
     }
     else
     {
-        SDL_Rect quadrad = {frame - 150, 200, 251, 262};
+        SDL_Rect quadrad = {frame - 150 - camX, 200, 251, 262};
         SDL_RenderCopy(renderer, superslash_r, NULL, &quadrad);
         frame+=4;
+        for(int i=0; i<=9; i++)
+        {
+            if(monster[i].mPosX - quadrad.x - camX - 80 >= 0 && monster[i].mPosX - quadrad.x - camX - 80 <= 5)
+            {
+                if(monster[i].health.w >= 10) monster[i].health.w-=10;
+                else monster[i].health.w = 0;
+            }
+        }
+        if(abs(frame - dis) >= 500) frame = 10000;
+        cout << abs(frame - dis) << endl;
     }
 
     return frame;

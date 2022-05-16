@@ -31,6 +31,7 @@ class Knight
 
         bool super_slash = false, direction = false;
         int slash_frame;
+        int slash_distance;
 
         void loadtexture(string path_right, string path_left, SDL_Renderer* renderer);
         void handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Texture* superslash_left, SDL_Texture* superslash_right, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT);

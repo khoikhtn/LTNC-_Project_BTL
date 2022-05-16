@@ -20,7 +20,7 @@ class Boss
         SDL_Rect SpriteClips[10];
 
         int frame = 0, fight_scene;
-        int mPosX  = 1900, mPosY = 150;
+        int mPosX  = 7200, mPosY = 150;
         int charging = 200, stunning = 110, counting = 0;
 
         bool charge = false, launch = false, stunt = false;

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const int LEVEL_WIDTH = 2000;
+const int LEVEL_WIDTH = 7230;
 const int LEVEL_HEIGHT = 400;
 
 const int SCREEN_WIDTH = 1000;
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     SDL_Renderer* renderer;
     init(window, renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    //Intro(window, renderer);
+    Intro(window, renderer);
     while(true)
     {
         int k = Game(window, renderer);
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
         else break;
     }
     quitSDL(window, renderer);
-}
+    }
 
 int Game(SDL_Window* &window, SDL_Renderer* &renderer)
 {
@@ -49,8 +49,8 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
     knight.currentClip = &SpriteCLips[0];
     knight.render(0, 0, renderer, SpriteCLips);
 
-    Monster monster[4];
-    for(int i=0; i<=1; i++)
+    Monster monster[10];
+    for(int i=0; i<=4; i++)
     {
         monster[i].path_left = "bigguy1.png";
         monster[i].path_right = "bigguy2.png";
@@ -59,7 +59,7 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         monster[i].render(0, 0, renderer);
     }
 
-    for(int i=2; i<=3; i++)
+    for(int i=5; i<=9; i++)
     {
         monster[i].path_left = "monster1.png";
         monster[i].path_right = "monster2.png";
@@ -67,10 +67,16 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         monster[i].currentClip = &SpriteCLips[0];
         monster[i].render(0, 0, renderer);
     }
-    monster[0].mPosX = 900;
-    monster[1].mPosX = 11900;
-    monster[2].mPosX = 500;
-    monster[3].mPosX = 11500;
+    monster[0].mPosX = ;
+    monster[1].mPosX = ;
+    monster[2].mPosX = ;
+    monster[3].mPosX = ;
+    monster[4].mPosX = ;
+    monster[5].mPosX = ;
+    monster[6].mPosX = ;
+    monster[7].mPosX = ;
+    monster[8].mPosX = ;
+    monster[9].mPosX = ;
 
     Boss boss;
     boss.loadtexture("boss2.png", "boss1.png", renderer);
@@ -101,8 +107,8 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
             if(knight.standing/20 > 6) knight.standing = 100;
         }
 
-        for(int i=0; i<=3; i++) monster[i].move(knight.mPosX, SpriteCLips);
-        for(int i=0; i<=3; i++) knight.being_hit_status(monster[i], SpriteCLips);
+        for(int i=0; i<=9; i++) monster[i].move(knight.mPosX, SpriteCLips);
+        for(int i=0; i<=9; i++) knight.being_hit_status(monster[i], SpriteCLips);
         knight.being_hit_by_boss_status(boss, SpriteCLips);
 
         camera.x = knight.mPosX - SCREEN_WIDTH/2;
@@ -127,10 +133,11 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
 
         if(boss.enter_boss_stage(knight.mPosX))//Enter boss stage
         {
+            if(knight.mPosX <= 5410) knight.mPosX = 6175;
             boss.move(knight.mPosX, SpriteCLips);
             camera.x = LEVEL_WIDTH - camera.w;
             camera.y = LEVEL_HEIGHT - camera.h;
-            if(knight.mPosX <= 905) knight.mPosX+=5;
+            if(knight.mPosX <= 6170) knight.mPosX+=5;
         }
 
         if(knight.mPosX >= 850 && knight.mPosX <= 1200 && health_eaten == false)//Health boost
@@ -154,8 +161,8 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         render_map(renderer, mapp, camera);
         render_items(renderer, health, camera.x);
         knight.render(camera.x, camera.y, renderer, SpriteCLips);
-        knight.slash_frame = render_super_slash(renderer, superslash_left, superslash_right, knight.slash_frame, knight.direction);
-        for(int i=0; i<=3; i++) monster[i].render(camera.x, camera.y, renderer);
+        knight.slash_frame = render_super_slash(renderer, superslash_left, superslash_right, knight.slash_frame, knight.slash_distance, knight.direction, camera.x, monster);
+        for(int i=0; i<=9; i++) monster[i].render(camera.x, camera.y, renderer);
         boss.render(camera.x, camera.y, renderer);
 
         SDL_RenderPresent(renderer);

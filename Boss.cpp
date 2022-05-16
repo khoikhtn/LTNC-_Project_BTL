@@ -22,7 +22,7 @@ void Boss::loadtexture(string path_right, string path_left, SDL_Renderer* render
 
 bool Boss::enter_boss_stage(int knight_mPosX)
 {
-    if(knight_mPosX >= 900) return true;
+    if(knight_mPosX >= 5400) return true;
     return false;
 }
 
@@ -41,7 +41,7 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
     else if(knight_mPosX >= mPosX && charge == false && stunt == false)
     {
         mTexture = right;
-       mPosX++;
+        mPosX++;
         currentClip = &SpriteClips[frame/10];
         frame++;
         if(frame/10 >= 4) frame = 0;
@@ -54,7 +54,7 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         if(mTexture == left)
         {
             mPosX-=5;
-            if(mPosX >= 1000 && mPosX <= 1004)
+            if(mPosX >= 6235 && mPosX <= 6240)
             {
                 launch = false;
                 charge = false;
@@ -66,7 +66,7 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         else if(mTexture == right)
         {
             mPosX+=5;
-            if(mPosX >= 1800 && mPosX <= 1804)
+            if(mPosX >= 7000 && mPosX <= 7005)
             {
                 launch = false;
                 charge = false;

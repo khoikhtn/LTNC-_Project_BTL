@@ -21,15 +21,15 @@ class Boss
 
         int frame = 0, fight_scene;
         int mPosX  = 7200, mPosY = 150;
-        int charging = 200, stunning = 110, counting = 0;
+        int charging = 200, stunning = 110, raging = 850, counting_rage = 0, counting_stunt = 0;
 
-        bool charge = false, launch = false, stunt = false;
+        bool charge = false, launch = false, rage = false, stunt = false;
 
         bool enter_boss_stage(int knight_mPosX);
 
         void loadtexture(string path_right, string path_left, SDL_Renderer* renderer);
         void move(int knight_mPosX, SDL_Rect SpriteClips[]);
-        void render(int camX, int camY, SDL_Renderer* renderer);
+        void render(int camX, int camY, SDL_Renderer* renderer, SDL_Rect SpriteClips[]);
 };
 
 #endif

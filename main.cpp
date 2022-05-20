@@ -33,12 +33,14 @@ int main(int argc, char* argv[])
         if( play_again(window, renderer, k)) continue;
         else break;
     }
+
     quitSDL(window, renderer);
-    }
+}
 
 int Game(SDL_Window* &window, SDL_Renderer* &renderer)
 {
-    SDL_Rect SpriteCLips[20];
+    SDL_Rect SpriteCLips[30];
+
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     Sprite(SpriteCLips);
 
@@ -67,21 +69,21 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         monster[i].currentClip = &SpriteCLips[0];
         monster[i].render(0, 0, renderer);
     }
-    monster[0].mPosX = ;
-    monster[1].mPosX = ;
-    monster[2].mPosX = ;
-    monster[3].mPosX = ;
-    monster[4].mPosX = ;
-    monster[5].mPosX = ;
-    monster[6].mPosX = ;
-    monster[7].mPosX = ;
-    monster[8].mPosX = ;
-    monster[9].mPosX = ;
+    monster[0].mPosX = 1800;
+    monster[1].mPosX = 2700;
+    monster[2].mPosX = 3700;
+    monster[3].mPosX = 3800;
+    monster[4].mPosX = 4000;
+    monster[5].mPosX = 1000;
+    monster[6].mPosX = 1500;
+    monster[7].mPosX = 2500;
+    monster[8].mPosX = 2600;
+    monster[9].mPosX = 3500;
 
     Boss boss;
     boss.loadtexture("boss2.png", "boss1.png", renderer);
     boss.currentClip = &SpriteCLips[0];
-    boss.render(0, 0, renderer);
+    boss.render(0, 0, renderer, SpriteCLips);
 
     SDL_Texture* health = load_bg(renderer, "health.png");
     bool health_eaten = false;
@@ -148,11 +150,11 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
             health_eaten = true;
         }
 
-        if(knight.health.w == 0)
+        if(knight.health.w <= 0)
         {
             return 0;
         }
-        if(boss.health.w == 0)
+        if(boss.health.w <= 0)
         {
             return 1;
         }
@@ -160,12 +162,15 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         SDL_RenderClear(renderer);
         render_map(renderer, mapp, camera);
         render_items(renderer, health, camera.x);
+
+        for(int i=0; i<=9; i++) monster[i].render(camera.x, camera.y, renderer);
+        boss.render(camera.x, camera.y, renderer, SpriteCLips);
+
         knight.render(camera.x, camera.y, renderer, SpriteCLips);
         knight.slash_frame = render_super_slash(renderer, superslash_left, superslash_right, knight.slash_frame, knight.slash_distance, knight.direction, camera.x, monster);
-        for(int i=0; i<=9; i++) monster[i].render(camera.x, camera.y, renderer);
-        boss.render(camera.x, camera.y, renderer);
 
         SDL_RenderPresent(renderer);
+        cout << knight.mPosX << endl;
     }
 }
 
@@ -292,4 +297,3 @@ bool play_again(SDL_Window* &window, SDL_Renderer* &renderer, int k)
         SDL_RenderPresent(renderer);
     }
 }
-

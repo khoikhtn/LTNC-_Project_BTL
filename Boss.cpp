@@ -28,7 +28,7 @@ bool Boss::enter_boss_stage(int knight_mPosX)
 
 void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
 {
-    if(knight_mPosX < mPosX && charge == false && stunt == false)
+    if(knight_mPosX < mPosX && charge == false && stunt == false && rage == false)
     {
         mTexture = left;
         mPosX--;
@@ -38,17 +38,18 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         }
 
 
-    else if(knight_mPosX >= mPosX && charge == false && stunt == false)
+    else if(knight_mPosX >= mPosX && charge == false && stunt == false && rage == false)
     {
         mTexture = right;
         mPosX++;
+
         currentClip = &SpriteClips[frame/10];
         frame++;
         if(frame/10 >= 4) frame = 0;
 
     }
     //Launching
-    if(launch == true && stunt == false)
+    if(launch == true && stunt == false && rage == false)
     {
         currentClip = &SpriteClips[9];
         if(mTexture == left)
@@ -60,7 +61,7 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
                 charge = false;
                 currentClip = &SpriteClips[0];
                 charging = 200;
-                counting++;
+                counting_stunt++;
             }
         }
         else if(mTexture == right)
@@ -72,12 +73,12 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
                 charge = false;
                 currentClip = &SpriteClips[0];
                 charging = 200;
-                counting++;
+                counting_stunt++;
             }
         }
     }
     //Charging
-    else if((abs(mPosX - knight_mPosX) <= 300 || charge == true) && stunt == false)
+    else if((abs(mPosX - knight_mPosX) <= 300 || charge == true) && stunt == false && rage == false)
     {
         charge = true;
         currentClip = &SpriteClips[charging/50];
@@ -92,11 +93,42 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         }
     }
 
-    //Stunning
-    if(counting == 3 || stunt == true)
+    if(health.w >= 100 && health.w <= 110)//Rage
     {
-        if(counting == 3 && stunning == 110 && mTexture == right) mTexture = left;
-        else if(counting == 3 && stunning == 110 && mTexture == left) mTexture = right;
+        rage = true;
+        currentClip = &SpriteClips[raging/50];
+        raging++;
+        if(raging/50 > 18 && counting_rage == 0)
+        {
+            raging = 850;
+            counting_rage++;
+        }
+        else if(raging/50 > 19 && counting_rage == 1)
+        {
+            raging = 160;
+            counting_rage++;
+        }
+        if(raging/8 >= 20 && counting_rage == 2)
+        {
+            currentClip = &SpriteClips[raging/8];
+            if(mTexture == left) mPosX = 6300;
+        }
+        if(raging/8 > 27 && counting_rage == 2)
+        {
+            rage = false;
+            //health.w-=11;
+            if(mTexture == left) mPosX = 7000;
+            raging = 850;
+            counting_rage = 0;
+            counting_stunt = 0;
+        }
+    }
+
+    //Stunning
+    if((counting_stunt == 3 || stunt == true) && rage == false)
+    {
+        if(counting_stunt == 3 && stunning == 110 && mTexture == right) mTexture = left;
+        else if(counting_stunt == 3 && stunning == 110 && mTexture == left) mTexture = right;
 
         mPosY = 190;
         stunt = true;
@@ -105,21 +137,28 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         if(stunning/10 > 12)
         {
             stunning = 110;
-            counting++;
+            counting_stunt++;
         }
-        if(counting == 15)
+        if(counting_stunt == 15)
         {
             mPosY = 150;
             stunt = false;
-            counting = 0;
+            counting_stunt = 0;
         }
     }
 }
 
-void Boss::render(int camX, int camY, SDL_Renderer* renderer)
+void Boss::render(int camX, int camY, SDL_Renderer* renderer, SDL_Rect SpriteClips[])
 {
     health.x = mPosX + currentClip->w/2 - 100 - camX;
     health.y = mPosY;
+
+    if(currentClip == &SpriteClips[20] || currentClip == &SpriteClips[21] || currentClip == &SpriteClips[22] || currentClip == &SpriteClips[23] || currentClip == &SpriteClips[24] || currentClip == &SpriteClips[25] || currentClip == &SpriteClips[26] || currentClip == &SpriteClips[27])
+    {
+        if(mTexture == right) health.x = 50;
+        else if(mTexture == left) health.x = 700;
+        health.y+=80;
+    }
 
     health_border.x = health.x - 2;
     health_border.y = health.y - 1;

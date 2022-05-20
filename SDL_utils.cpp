@@ -102,6 +102,60 @@ void Sprite(SDL_Rect SpriteClips[])
     SpriteClips[16].w = 299;
     SpriteClips[16].h = 262;
 
+    SpriteClips[17].x = 1801;//Rage boss
+    SpriteClips[17].y = 0;
+    SpriteClips[17].w = 199;
+    SpriteClips[17].h = 262;
+
+    SpriteClips[18].x = 2001;
+    SpriteClips[18].y = 0;
+    SpriteClips[18].w = 199;
+    SpriteClips[18].h = 262;
+
+    SpriteClips[19].x = 2201;
+    SpriteClips[19].y = 0;
+    SpriteClips[19].w = 249;
+    SpriteClips[19].h = 262;
+
+    SpriteClips[20].x = 1;//Smash ground
+    SpriteClips[20].y = 263;
+    SpriteClips[20].w = 940;
+    SpriteClips[20].h = 261;
+
+    SpriteClips[21].x = 1;
+    SpriteClips[21].y = 525;
+    SpriteClips[21].w = 940;
+    SpriteClips[21].h = 261;
+
+    SpriteClips[22].x = 1;
+    SpriteClips[22].y = 787;
+    SpriteClips[22].w = 940;
+    SpriteClips[22].h = 261;
+
+    SpriteClips[23].x = 1;
+    SpriteClips[23].y = 1049;
+    SpriteClips[23].w = 940;
+    SpriteClips[23].h = 261;
+
+    SpriteClips[24].x = 1;
+    SpriteClips[24].y = 1311;
+    SpriteClips[24].w = 940;
+    SpriteClips[24].h = 261;
+
+    SpriteClips[25].x = 1;
+    SpriteClips[25].y = 1573;
+    SpriteClips[25].w = 940;
+    SpriteClips[25].h = 261;
+
+    SpriteClips[26].x = 1;
+    SpriteClips[26].y = 1835;
+    SpriteClips[26].w = 940;
+    SpriteClips[26].h = 261;
+
+    SpriteClips[27].x = 1;
+    SpriteClips[27].y = 2097;
+    SpriteClips[27].w = 940;
+    SpriteClips[27].h = 261;
 }
 
 SDL_Texture* load_bg(SDL_Renderer* renderer, string path)
@@ -165,7 +219,6 @@ int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Te
             }
         }
         if(abs(frame - dis) >= 500) frame = 10000;
-        cout << abs(frame - dis) << endl;
     }
 
     return frame;

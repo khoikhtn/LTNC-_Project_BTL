@@ -173,18 +173,12 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Rect camera)
     SDL_RenderCopy(renderer, mapp, &camera, &quadrad);
 }
 
-void render_start_button(SDL_Renderer* renderer, SDL_Texture* button, SDL_Rect currentButton)
-{
-    SDL_Rect quadrad = {430, 200, 150, 80};
-    SDL_RenderCopy(renderer, button, &currentButton, &quadrad);
-}
-
-void render_play_again_button(SDL_Renderer* renderer, SDL_Texture* button1, SDL_Texture* button2, SDL_Rect currentButton1, SDL_Rect currentButton2)
+void render_button(SDL_Renderer* renderer, SDL_Texture* button1, SDL_Texture* button2, SDL_Rect currentButton1, SDL_Rect currentButton2)
 {
     SDL_Rect quadrad1 = {430, 200, 150, 80};
     SDL_RenderCopy(renderer, button1, &currentButton1, &quadrad1);
 
-    SDL_Rect quadrad2 = {430, 300, 150, 80};
+    SDL_Rect quadrad2 = {400, 300, 200, 80};
     SDL_RenderCopy(renderer, button2, &currentButton2, &quadrad2);
 }
 
@@ -228,4 +222,10 @@ void render_items(SDL_Renderer* renderer, SDL_Texture* item, int camX)
 {
     SDL_Rect quadrad = {900 - camX, 330, 80, 50};
     SDL_RenderCopy(renderer, item, NULL, &quadrad);
+}
+
+void back_button(SDL_Renderer* renderer, SDL_Texture* backbut, SDL_Rect current_back)
+{
+    SDL_Rect quadrad = {10, 10, 150, 80};
+    SDL_RenderCopy(renderer, backbut, &current_back, &quadrad);
 }

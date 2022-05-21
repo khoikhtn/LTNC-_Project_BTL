@@ -12,7 +12,7 @@
 1653089755 source:d:\22.06.04 uet\code\project_btl\knight.cpp
 	"Knight.h"
 
-1653087423 source:d:\22.06.04 uet\code\project_btl\main.cpp
+1653157907 source:d:\22.06.04 uet\code\project_btl\main.cpp
 	<iostream>
 	<SDL.h>
 	"Knight.h"
@@ -27,7 +27,7 @@
 	"Boss.h"
 	"SDL_utils.h"
 
-1652735856 d:\22.06.04 uet\code\project_btl\sdl_utils.h
+1653110754 d:\22.06.04 uet\code\project_btl\sdl_utils.h
 	<SDL.h>
 	<SDL_image.h>
 	<algorithm>
@@ -36,7 +36,7 @@
 	"Monster.h"
 	"Boss.h"
 
-1653074286 source:d:\22.06.04 uet\code\project_btl\sdl_utils.cpp
+1653157819 source:d:\22.06.04 uet\code\project_btl\sdl_utils.cpp
 	"SDL_utils.h"
 
 1652487557 d:\22.06.04 uet\code\project_btl\monster.h

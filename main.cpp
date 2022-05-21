@@ -170,7 +170,6 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         knight.slash_frame = render_super_slash(renderer, superslash_left, superslash_right, knight.slash_frame, knight.slash_distance, knight.direction, camera.x, monster);
 
         SDL_RenderPresent(renderer);
-        cout << knight.mPosX << endl;
     }
 }
 
@@ -178,8 +177,11 @@ void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
 {
     SDL_Texture* ingamebg = load_bg(renderer, "introbg.png");
     SDL_Texture* play_button = load_bg(renderer, "playbutton.png");
+    SDL_Texture* instruction_button = load_bg(renderer, "instructions.png");
+     SDL_Texture* instruct_bg = load_bg(renderer, "instructionbg.png");
+    SDL_Texture* backbutton = load_bg(renderer, "back.png");
 
-    SDL_Rect SpriteButs[2];
+    SDL_Rect SpriteButs[4];
 
     SpriteButs[0].x = 0;
     SpriteButs[0].y = 0;
@@ -191,10 +193,23 @@ void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
     SpriteButs[1].w = 150;
     SpriteButs[1].h = 80;
 
+    SpriteButs[2].x = 0;
+    SpriteButs[2].y = 0;
+    SpriteButs[2].w = 200;
+    SpriteButs[2].h = 80;
+
+    SpriteButs[3].x = 210;
+    SpriteButs[3].y = 0;
+    SpriteButs[3].w = 200;
+    SpriteButs[3].h = 80;
+
     SDL_Rect currentButton = SpriteButs[0];
+    SDL_Rect current_instruct = SpriteButs[2];
+    SDL_Rect current_back = SpriteButs[0];
 
     bool start = false;
-    bool inside;
+    bool instruct = false;
+    bool inside_play, inside_instruct;
     bool quit = false;
     SDL_Event e;
     while(!quit && !start)
@@ -207,20 +222,66 @@ void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
             {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
-                inside = true;
+
+                inside_play = true;
+                inside_instruct = true;
+
                 if(x < 430 || x > 580 || y < 200 || y > 280)
                 {
-                    inside = false;
+                    inside_play = false;
                 }
 
-                if(inside == true) currentButton = SpriteButs[1];
+                if(x < 400 || x > 600 || y < 300 || y > 380)
+                {
+                    inside_instruct = false;
+                }
+
+                if(inside_play == true) currentButton = SpriteButs[1];
                 else currentButton = SpriteButs[0];
+
+                if(inside_instruct == true) current_instruct = SpriteButs[3];
+                else current_instruct = SpriteButs[2];
+            }
+
+            if(inside_play == true && e.type == SDL_MOUSEBUTTONDOWN) start = true;
+
+            if(inside_instruct == true && e.type == SDL_MOUSEBUTTONDOWN)
+            {
+                SDL_Event eve;
+                bool backk;
+                bool undo = false;
+                while(!undo)
+                {
+                    while(SDL_PollEvent(&eve) != 0)
+                    {
+                        if(eve.type == SDL_QUIT) undo = true;
+                        if(eve.type == SDL_MOUSEMOTION)
+                        {
+                            int x, y;
+                            SDL_GetMouseState(&x, &y);
+                            backk = true;
+                            if(x < 10 || x > 160 || y < 10 || y > 80)
+                            {
+                                backk = false;
+                            }
+
+                            if(backk == false) current_back = SpriteButs[0];
+                            else current_back = SpriteButs[1];
+                        }
+                        if(backk == true && eve.type == SDL_MOUSEBUTTONDOWN) undo = true;
+                    }
+
+                    SDL_RenderClear(renderer);
+                    SDL_RenderCopy(renderer, instruct_bg, NULL, NULL);
+                    back_button(renderer, backbutton, current_back);
+                    SDL_RenderPresent(renderer);
+                }
             }
         }
-        if(inside == true && e.type == SDL_MOUSEBUTTONDOWN) start = true;
+
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, ingamebg, NULL, NULL);
-        render_start_button(renderer, play_button, currentButton);
+        render_button(renderer, play_button, instruction_button, currentButton,  current_instruct);
         SDL_RenderPresent(renderer);
     }
 }
@@ -293,7 +354,7 @@ bool play_again(SDL_Window* &window, SDL_Renderer* &renderer, int k)
 
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, game_over_bg, NULL, NULL);
-        render_play_again_button(renderer, play_again_button, quit_button, current_pab, current_gob);
+        render_button(renderer, play_again_button, quit_button, current_pab, current_gob);
         SDL_RenderPresent(renderer);
     }
 }

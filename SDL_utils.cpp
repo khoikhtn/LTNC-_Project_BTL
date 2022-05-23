@@ -206,7 +206,7 @@ int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Te
 {
     if(direction == false)
     {
-        SDL_Rect quadrad = {frame - 300 - camX, 200, 251, 262};
+        SDL_Rect quadrad = {frame - 300 - camX, 200, 200, 262};
         SDL_RenderCopy(renderer, superslash_l, NULL, &quadrad);
         frame-=4;
         for(int i=0; i<=9; i++)
@@ -227,12 +227,12 @@ int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Te
     }
     else
     {
-        SDL_Rect quadrad = {frame - 150 - camX, 200, 251, 262};
+        SDL_Rect quadrad = {frame - 150 - camX, 200, 200, 262};
         SDL_RenderCopy(renderer, superslash_r, NULL, &quadrad);
         frame+=4;
         for(int i=0; i<=9; i++)
         {
-            if(monster[i].mPosX - quadrad.x - camX - 50 >= 0 && monster[i].mPosX - quadrad.x - camX - 50 <= 5)
+            if(monster[i].mPosX - quadrad.x - camX - 80 >= 0 && monster[i].mPosX - quadrad.x - camX - 80 <= 5)
             {
                 if(monster[i].health.w >= 10) monster[i].health.w-=10;
                 else monster[i].health.w = 0;
@@ -250,27 +250,76 @@ int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Te
     return frame;
 }
 
-int meteo_incoming(SDL_Texture* meteo, SDL_Renderer* renderer, int frame, int camX)
+int meteo_incoming(SDL_Texture* meteo, SDL_Renderer* renderer, int frame, int camX, int i)
 {
-    SDL_Rect quadrad = {3660 - camX, frame, 200, 300};
-    SDL_RenderCopy(renderer, meteo, NULL, &quadrad);
-    frame+=4;
+    if(i == 0)
+    {
+        SDL_Rect quadrad = {2900 - camX, frame, 200, 300};
+        SDL_RenderCopy(renderer, meteo, NULL, &quadrad);
+        frame+=4;
+    }
+
+    else if(i == 1)
+    {
+        SDL_Rect quadrad = {3200 - camX, frame, 200, 300};
+        SDL_RenderCopy(renderer, meteo, NULL, &quadrad);
+        frame+=4;
+    }
+
+    else if(i == 2)
+    {
+        SDL_Rect quadrad = {3600 - camX, frame, 200, 300};
+        SDL_RenderCopy(renderer, meteo, NULL, &quadrad);
+        frame+=4;
+    }
     return frame;
 }
 
-int render_meteo(int knight_mPosX, int rep, int &meteo_frame, SDL_Texture* danger_sign, SDL_Texture* meteo, SDL_Renderer* renderer, int camX, int &knight_health)
+int render_meteo(int knight_mPosX, int rep, int &meteo_frame, SDL_Texture* danger_sign, SDL_Texture* meteo, SDL_Renderer* renderer, int camX, int &knight_health, int i)
 {
-    if(knight_mPosX >= 3300 && knight_mPosX <= 3900)
+    if(knight_mPosX >= 2600 && knight_mPosX <= 4500 && i == 0)//Meteo1
     {
-        if(rep == 100)
+        if(rep == 70)
         {
-            meteo_frame = meteo_incoming(meteo, renderer, meteo_frame, camX);
-            if(knight_mPosX >= 3600 && knight_mPosX <= 3800 && meteo_frame >= 100 && meteo_frame <= 200) knight_health--;
+            meteo_frame = meteo_incoming(meteo, renderer, meteo_frame, camX, i);
+            if(knight_mPosX >= 2800 && knight_mPosX <= 3000 && meteo_frame >= 100 && meteo_frame <= 200) knight_health--;
 
         }
         else
         {
-            SDL_Rect quadrad = {3660 - camX, 10, 100, 100};
+            SDL_Rect quadrad = {2900 - camX, 10, 100, 100};
+            SDL_RenderCopy(renderer, danger_sign, NULL, &quadrad);
+            rep++;
+        }
+    }
+
+    else if(knight_mPosX >= 2900 && knight_mPosX <= 4500 && i == 1)//Meteo2
+    {
+        if(rep == 70)
+        {
+            meteo_frame = meteo_incoming(meteo, renderer, meteo_frame, camX, i);
+            if(knight_mPosX >= 3100 && knight_mPosX <= 3300 && meteo_frame >= 100 && meteo_frame <= 200) knight_health--;
+
+        }
+        else
+        {
+            SDL_Rect quadrad = {3200 - camX, 10, 100, 100};
+            SDL_RenderCopy(renderer, danger_sign, NULL, &quadrad);
+            rep++;
+        }
+    }
+
+    else if(knight_mPosX >= 3200 && knight_mPosX <= 5000 && i == 2)//Meteo3
+    {
+        if(rep == 70)
+        {
+            meteo_frame = meteo_incoming(meteo, renderer, meteo_frame, camX, i);
+            if(knight_mPosX >= 3500 && knight_mPosX <= 3700 && meteo_frame >= 100 && meteo_frame <= 200) knight_health--;
+
+        }
+        else
+        {
+            SDL_Rect quadrad = {3600 - camX, 10, 100, 100};
             SDL_RenderCopy(renderer, danger_sign, NULL, &quadrad);
             rep++;
         }

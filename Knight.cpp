@@ -16,7 +16,7 @@ void Knight::loadtexture(string path_right, string path_left, SDL_Renderer* rend
 
 }
 
-void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Texture* superslash_left, SDL_Texture* superslash_right, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT, int &rep, int &meteo_frame, SDL_Texture* danger_sign, SDL_Texture* meteo)
+void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Texture* superslash_left, SDL_Texture* superslash_right, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT, int rep[], int meteo_frame[], SDL_Texture* danger_sign, SDL_Texture* meteo, SDL_Texture* pause_but, SDL_Rect current, SDL_Rect quadrad)
 {
     const Uint8* keystates = SDL_GetKeyboardState(NULL);
 
@@ -87,7 +87,12 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, 
             this->render(camera.x, camera.y, renderer, SpriteClips);
             slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster, boss);
 
-            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
+            for(int i = 0; i < 3; i++)
+            {
+                rep[i] = render_meteo(mPosX, rep[i], meteo_frame[i], danger_sign, meteo, renderer, camera.x, health.w, i);
+            }
+
+            SDL_RenderCopy(renderer, pause_but, &current, &quadrad);
 
             SDL_RenderPresent(renderer);
             i++;
@@ -137,7 +142,12 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, 
             this->render(camera.x, camera.y, renderer, SpriteClips);
             slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster, boss);
 
-            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
+            for(int i = 0; i < 3; i++)
+            {
+                rep[i] = render_meteo(mPosX, rep[i], meteo_frame[i], danger_sign, meteo, renderer, camera.x, health.w, i);
+            }
+
+            SDL_RenderCopy(renderer, pause_but, &current, &quadrad);
 
             SDL_RenderPresent(renderer);
             i++;
@@ -173,7 +183,14 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, 
 
             this->render(camera.x, camera.y, renderer, SpriteClips);
             slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster, boss);
-            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
+
+            for(int i = 0; i < 3; i++)
+            {
+                rep[i] = render_meteo(mPosX, rep[i], meteo_frame[i], danger_sign, meteo, renderer, camera.x, health.w, i);
+            }
+
+            SDL_RenderCopy(renderer, pause_but, &current, &quadrad);
+
             SDL_RenderPresent(renderer);
 
             fight_scene++;
@@ -228,14 +245,19 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, 
             this->render(camera.x, camera.y, renderer, SpriteClips);
             slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster, boss);
 
-            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
+            for(int i = 0; i < 3; i++)
+            {
+                rep[i] = render_meteo(mPosX, rep[i], meteo_frame[i], danger_sign, meteo, renderer, camera.x, health.w, i);
+            }
+
+            SDL_RenderCopy(renderer, pause_but, &current, &quadrad);
 
             SDL_RenderPresent(renderer);
         }
     }
 
     //Special Attack
-    if(keystates[SDL_SCANCODE_X])
+    if(keystates[SDL_SCANCODE_X] && power.w == 50)
     {
         if(mTexture == left) direction = false;
         else direction = true;
@@ -243,10 +265,10 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, 
         slash_frame = mPosX + currentClip->w;
         slash_distance = mPosX + currentClip->w;
 
-        int special_attack = 210;
-        while(special_attack/15 <= 16)
+        int special_attack = 350;
+        while(special_attack/25 <= 16)
         {
-            currentClip = &SpriteClips[special_attack/15];
+            currentClip = &SpriteClips[special_attack/25];
             for(int i=0; i<=9; i++) monster[i].move(mPosX, SpriteClips);
             for(int i=0; i<=9; i++) this->hits_monster_status(monster[i], SpriteClips);
             this->hits_boss_status(boss, SpriteClips);
@@ -268,7 +290,12 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, 
 
             this->render(camera.x, camera.y, renderer, SpriteClips);
 
-            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
+            for(int i = 0; i < 3; i++)
+            {
+                rep[i] = render_meteo(mPosX, rep[i], meteo_frame[i], danger_sign, meteo, renderer, camera.x, health.w, i);
+            }
+
+            SDL_RenderCopy(renderer, pause_but, &current, &quadrad);
 
             SDL_RenderPresent(renderer);
             special_attack++;
@@ -459,6 +486,7 @@ void Knight::render(int camX, int camY, SDL_Renderer* renderer, SDL_Rect SpriteC
         if(currentClip == &SpriteClips[8]) health.x -= 50;
     }
 
+    if(currentClip == &SpriteClips[15] || currentClip == &SpriteClips[16]) mPosY = 70;
     health.y = mPosY + 160;
 
     health_border.x = health.x - 2;
@@ -488,7 +516,9 @@ void Knight::render(int camX, int camY, SDL_Renderer* renderer, SDL_Rect SpriteC
 
     SDL_Rect quadrad = {mPosX - camX, mPosY - camY, currentClip->w, currentClip->h};
     SDL_RenderCopy(renderer, mTexture, currentClip, &quadrad);
-}//
+
+    if(currentClip == &SpriteClips[16]) mPosY = 110;
+}
 
 
 

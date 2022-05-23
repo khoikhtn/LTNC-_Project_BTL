@@ -71,14 +71,14 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         monster[i].render(0, 0, renderer);
     }
     monster[0].mPosX = 1240;
-    monster[1].mPosX = 2890;
-    monster[2].mPosX = 3000;
+    monster[1].mPosX = 12800;
+    monster[2].mPosX = 13000;
     monster[3].mPosX = 4720;
     monster[4].mPosX = 4900;
     monster[5].mPosX = 870;
     monster[6].mPosX = 1650;
     monster[7].mPosX = 1700;
-    monster[8].mPosX = 3200;
+    monster[8].mPosX = 12700;
     monster[9].mPosX = 5000;
 
     Boss boss;
@@ -90,11 +90,16 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
     bool health_eaten = false;
 
     SDL_Texture* superslash_right = load_bg(renderer, "superslash1.png");
-    SDL_Texture* superslash_left = load_bg(renderer, "superslash2.png");
+    SDL_Texture* superslash_left = load_bg(renderer, "superslash1.png");
 
     SDL_Texture* meteorite = load_bg(renderer, "meteorite.png");
     SDL_Texture* danger_sign = load_bg(renderer, "fuckingdanger.png");
-    int meteo_frame = -350, rep = 0;
+    int meteo_frame[3], rep[3];
+    for(int i=0; i<=2; i++)
+    {
+        meteo_frame[i] = -350;
+        rep[i] = 0;
+    }
 
     SDL_Texture* pause_but = load_bg(renderer, "pause.png");
     SDL_Rect current = SpriteCLips[28];
@@ -117,7 +122,7 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
                 SDL_GetMouseState(&x, &y);
 
                 inside = true;
-                if(x<10 || x>50 || y<10 || y>50) inside = false;
+                if(x < 10 || x > 50 || y < 10 || y > 50) inside = false;
 
                 if(inside == true) current = SpriteCLips[29];
                 else current = SpriteCLips[28];
@@ -128,7 +133,7 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
                 pause(pause_but, renderer, SpriteCLips);
             }
         }
-        knight.handleEvent(SpriteCLips, monster, boss, renderer, mapp, health, superslash_left, superslash_right, camera, LEVEL_WIDTH, LEVEL_HEIGHT, rep, meteo_frame, danger_sign, meteorite);
+        knight.handleEvent(SpriteCLips, monster, boss, renderer, mapp, health, superslash_left, superslash_right, camera, LEVEL_WIDTH, LEVEL_HEIGHT, rep, meteo_frame, danger_sign, meteorite, pause_but, current, quadrad);
 
         if(knight.mVelX == 0)// Knight's standstill
         {
@@ -234,11 +239,14 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         knight.render(camera.x, camera.y, renderer, SpriteCLips);
         knight.slash_frame = render_super_slash(renderer, superslash_left, superslash_right, knight.slash_frame, knight.slash_distance, knight.direction, camera.x, monster, boss);
 
-        rep = render_meteo(knight.mPosX, rep, meteo_frame, danger_sign, meteorite, renderer, camera.x, knight.health.w);
+        for(int i=0; i<=2; i++)
+        {
+            rep[i] = render_meteo(knight.mPosX, rep[i], meteo_frame[i], danger_sign, meteorite, renderer, camera.x, knight.health.w, i);
+        }
         SDL_RenderCopy(renderer, pause_but, &current, &quadrad);
 
         SDL_RenderPresent(renderer);
-        //cout << knight.mPosX << endl;
+        cout << knight.mPosX << endl;
     }
 }
 

@@ -19,6 +19,7 @@ const int NUMBERS_OF_MONSTERS = 4;
 void Intro(SDL_Window* &window, SDL_Renderer* &renderer);
 int Game(SDL_Window* &window, SDL_Renderer* &renderer);
 bool play_again(SDL_Window* &window, SDL_Renderer* &renderer, int k);
+void pause(SDL_Texture* pause_but, SDL_Renderer* renderer, SDL_Rect SpriteClips[]);
 
 int main(int argc, char* argv[])
 {
@@ -39,7 +40,7 @@ int main(int argc, char* argv[])
 
 int Game(SDL_Window* &window, SDL_Renderer* &renderer)
 {
-    SDL_Rect SpriteCLips[30];
+    SDL_Rect SpriteCLips[35];
 
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     Sprite(SpriteCLips);
@@ -69,16 +70,16 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         monster[i].currentClip = &SpriteCLips[0];
         monster[i].render(0, 0, renderer);
     }
-    monster[0].mPosX = 1800;
-    monster[1].mPosX = 2700;
-    monster[2].mPosX = 3700;
-    monster[3].mPosX = 3800;
-    monster[4].mPosX = 4000;
-    monster[5].mPosX = 1000;
-    monster[6].mPosX = 1500;
-    monster[7].mPosX = 2500;
-    monster[8].mPosX = 2600;
-    monster[9].mPosX = 3500;
+    monster[0].mPosX = 1240;
+    monster[1].mPosX = 2890;
+    monster[2].mPosX = 3000;
+    monster[3].mPosX = 4720;
+    monster[4].mPosX = 4900;
+    monster[5].mPosX = 870;
+    monster[6].mPosX = 1650;
+    monster[7].mPosX = 1700;
+    monster[8].mPosX = 3200;
+    monster[9].mPosX = 5000;
 
     Boss boss;
     boss.loadtexture("boss2.png", "boss1.png", renderer);
@@ -91,16 +92,43 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
     SDL_Texture* superslash_right = load_bg(renderer, "superslash1.png");
     SDL_Texture* superslash_left = load_bg(renderer, "superslash2.png");
 
+    SDL_Texture* meteorite = load_bg(renderer, "meteorite.png");
+    SDL_Texture* danger_sign = load_bg(renderer, "fuckingdanger.png");
+    int meteo_frame = -350, rep = 0;
+
+    SDL_Texture* pause_but = load_bg(renderer, "pause.png");
+    SDL_Rect current = SpriteCLips[28];
+    SDL_Rect quadrad = {10, 10, 50, 50};
+
     bool quit = false;
+    bool inside;
     SDL_Event e;
+
     while(!quit)
     {
         while(SDL_PollEvent(&e) != 0)
         {
             if(e.type == SDL_QUIT) quit = true;
             knight.stand_still(e);
+
+            if(e.type == SDL_MOUSEMOTION)
+            {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+
+                inside = true;
+                if(x<10 || x>50 || y<10 || y>50) inside = false;
+
+                if(inside == true) current = SpriteCLips[29];
+                else current = SpriteCLips[28];
+            }
+
+            if(inside == true && e.type == SDL_MOUSEBUTTONDOWN)
+            {
+                pause(pause_but, renderer, SpriteCLips);
+            }
         }
-        knight.handleEvent(SpriteCLips, monster, boss, renderer, mapp, health, superslash_left, superslash_right, camera, LEVEL_WIDTH, LEVEL_HEIGHT);
+        knight.handleEvent(SpriteCLips, monster, boss, renderer, mapp, health, superslash_left, superslash_right, camera, LEVEL_WIDTH, LEVEL_HEIGHT, rep, meteo_frame, danger_sign, meteorite);
 
         if(knight.mVelX == 0)// Knight's standstill
         {
@@ -140,14 +168,51 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
             camera.x = LEVEL_WIDTH - camera.w;
             camera.y = LEVEL_HEIGHT - camera.h;
             if(knight.mPosX <= 6170) knight.mPosX+=5;
+            if(knight.mPosX >= 7100) knight.mPosX-=5;
         }
 
-        if(knight.mPosX >= 850 && knight.mPosX <= 1200 && health_eaten == false)//Health boost
+        if(knight.mPosX >= 5280 && health_eaten == false)//Health boost
         {
             SDL_DestroyTexture(health);
             if(knight.health.w <= 40) knight.health.w +=10;
             else knight.health.w = 50;
             health_eaten = true;
+        }
+
+        if(knight.currentClip != &SpriteCLips[4]) // Knight's falling
+        {
+            if(knight.mTexture == knight.right && ((knight.mPosX >= 2400 && knight.mPosX <= 2480) || (knight.mPosX >= 4150 && knight.mPosX <= 4230)))
+            {
+                if(knight.mPosX >= 2400 && knight.mPosX <= 2480) knight.mPosX = 2440;
+                if(knight.mPosX >= 4150 && knight.mPosX <= 4230) knight.mPosX = 4190;
+
+                while(knight.mPosY <= 700)
+                {
+                    knight.mPosY+=10;
+                    SDL_RenderClear(renderer);
+                    render_map(renderer, mapp, camera);
+                    for(int i=0; i<=9; i++) monster[i].render(camera.x, camera.y, renderer);
+                    knight.render(camera.x, camera.y, renderer, SpriteCLips);
+                    SDL_RenderPresent(renderer);
+                }
+                return 0;
+            }
+            else if(knight.mTexture == knight.left && ((knight.mPosX >= 2370 && knight.mPosX <= 2450) || (knight.mPosX >= 4120 && knight.mPosX <= 4190)))
+            {
+                if(knight.mPosX >= 2370 && knight.mPosX <= 2450) knight.mPosX = 2410;
+                if(knight.mPosX >= 4120 && knight.mPosX <= 4190) knight.mPosX = 4155;
+
+                while(knight.mPosY <= 700)
+                {
+                    knight.mPosY+=10;
+                    SDL_RenderClear(renderer);
+                    render_map(renderer, mapp, camera);
+                    for(int i=0; i<=9; i++) monster[i].render(camera.x, camera.y, renderer);
+                    knight.render(camera.x, camera.y, renderer, SpriteCLips);
+                    SDL_RenderPresent(renderer);
+                }
+                return 0;
+            }
         }
 
         if(knight.health.w <= 0)
@@ -167,9 +232,13 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         boss.render(camera.x, camera.y, renderer, SpriteCLips);
 
         knight.render(camera.x, camera.y, renderer, SpriteCLips);
-        knight.slash_frame = render_super_slash(renderer, superslash_left, superslash_right, knight.slash_frame, knight.slash_distance, knight.direction, camera.x, monster);
+        knight.slash_frame = render_super_slash(renderer, superslash_left, superslash_right, knight.slash_frame, knight.slash_distance, knight.direction, camera.x, monster, boss);
+
+        rep = render_meteo(knight.mPosX, rep, meteo_frame, danger_sign, meteorite, renderer, camera.x, knight.health.w);
+        SDL_RenderCopy(renderer, pause_but, &current, &quadrad);
 
         SDL_RenderPresent(renderer);
+        //cout << knight.mPosX << endl;
     }
 }
 
@@ -178,7 +247,7 @@ void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
     SDL_Texture* ingamebg = load_bg(renderer, "introbg.png");
     SDL_Texture* play_button = load_bg(renderer, "playbutton.png");
     SDL_Texture* instruction_button = load_bg(renderer, "instructions.png");
-     SDL_Texture* instruct_bg = load_bg(renderer, "instructionbg.png");
+    SDL_Texture* instruct_bg = load_bg(renderer, "instructionbg.png");
     SDL_Texture* backbutton = load_bg(renderer, "back.png");
 
     SDL_Rect SpriteButs[4];
@@ -231,7 +300,7 @@ void Intro(SDL_Window* &window, SDL_Renderer* &renderer)
                     inside_play = false;
                 }
 
-                if(x < 400 || x > 600 || y < 300 || y > 380)
+                if(x < 425 || x > 575 || y < 300 || y > 380)
                 {
                     inside_instruct = false;
                 }
@@ -331,7 +400,7 @@ bool play_again(SDL_Window* &window, SDL_Renderer* &renderer, int k)
                     inside_pa = false;
                 }
 
-                if(x < 430 || x > 580 || y < 300 || y > 380)
+                if(x < 425 || x > 575 || y < 300 || y > 380)
                 {
                     inside_quit = false;
                 }
@@ -342,19 +411,54 @@ bool play_again(SDL_Window* &window, SDL_Renderer* &renderer, int k)
                 if(inside_quit == true) current_gob = SpriteButs[1];
                 else current_gob = SpriteButs[0];
             }
-        }
-        if(inside_pa == true && e.type == SDL_MOUSEBUTTONDOWN)
-        {
-            return true;
-        }
-        else if(inside_quit == true && e.type == SDL_MOUSEBUTTONDOWN)
-        {
-            return false;
-        }
 
+            if(inside_pa == true && e.type == SDL_MOUSEBUTTONDOWN)
+            {
+                return true;
+            }
+            else if(inside_quit == true && e.type == SDL_MOUSEBUTTONDOWN)
+            {
+                return false;
+            }
+        }
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, game_over_bg, NULL, NULL);
         render_button(renderer, play_again_button, quit_button, current_pab, current_gob);
+        SDL_RenderPresent(renderer);
+    }
+}
+
+void pause(SDL_Texture* pause_but, SDL_Renderer* renderer, SDL_Rect SpriteClips[])
+{
+    SDL_Rect quadrad = {10, 10 , 50, 50};
+    SDL_Rect current = SpriteClips[30];
+
+    bool inside;
+    bool quit = false;
+    SDL_Event e;
+    while(!quit)
+    {
+        while(SDL_PollEvent(&e) != 0)
+        {
+            if(e.type == SDL_QUIT) quit = true;
+
+            if(e.type == SDL_MOUSEMOTION)
+            {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                inside = true;
+
+                if(x < 10 || x > 50 || y < 10 || y > 50) inside = false;
+
+                if(inside == true) current = SpriteClips[31];
+                else current = SpriteClips[30];
+            }
+            if(inside == true && e.type == SDL_MOUSEBUTTONDOWN)
+            {
+                quit = true;
+            }
+        }
+        SDL_RenderCopy(renderer, pause_but, &current, &quadrad);
         SDL_RenderPresent(renderer);
     }
 }

@@ -156,6 +156,26 @@ void Sprite(SDL_Rect SpriteClips[])
     SpriteClips[27].y = 2097;
     SpriteClips[27].w = 940;
     SpriteClips[27].h = 261;
+
+    SpriteClips[28].x = 1; //Pause button
+    SpriteClips[28].y = 0;
+    SpriteClips[28].w = 49;
+    SpriteClips[28].h = 49;
+
+    SpriteClips[29].x = 51;
+    SpriteClips[29].y = 0;
+    SpriteClips[29].w = 49;
+    SpriteClips[29].h = 49;
+
+    SpriteClips[30].x = 101;
+    SpriteClips[30].y = 0;
+    SpriteClips[30].w = 49;
+    SpriteClips[30].h = 49;
+
+    SpriteClips[31].x = 151;
+    SpriteClips[31].y = 0;
+    SpriteClips[31].w = 49;
+    SpriteClips[31].h = 49;
 }
 
 SDL_Texture* load_bg(SDL_Renderer* renderer, string path)
@@ -178,11 +198,11 @@ void render_button(SDL_Renderer* renderer, SDL_Texture* button1, SDL_Texture* bu
     SDL_Rect quadrad1 = {430, 200, 150, 80};
     SDL_RenderCopy(renderer, button1, &currentButton1, &quadrad1);
 
-    SDL_Rect quadrad2 = {400, 300, 200, 80};
+    SDL_Rect quadrad2 = {425, 300, 150, 80};
     SDL_RenderCopy(renderer, button2, &currentButton2, &quadrad2);
 }
 
-int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Texture* superslash_r, int frame, int dis, bool direction, int camX, Monster monster[])
+int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Texture* superslash_r, int frame, int dis, bool direction, int camX, Monster monster[], Boss &boss)
 {
     if(direction == false)
     {
@@ -191,12 +211,18 @@ int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Te
         frame-=4;
         for(int i=0; i<=9; i++)
         {
-            if(quadrad.x - monster[i].mPosX + camX  >= 0 && quadrad.x - monster[i].mPosX +camX <= 5)
+            if(quadrad.x - monster[i].mPosX + camX  >= 0 && quadrad.x - monster[i].mPosX + camX <= 5)
             {
                 if(monster[i].health.w >= 10) monster[i].health.w-=10;
                 else monster[i].health.w = 0;
             }
         }
+
+        if(quadrad.x - boss.mPosX + camX - 50 >= 0 && quadrad.x - boss.mPosX + camX - 50 <= 5)
+        {
+            boss.health.w -= 10;
+        }
+
         if(abs(frame - dis) >= 500) frame = -100;
     }
     else
@@ -206,21 +232,55 @@ int render_super_slash(SDL_Renderer* renderer, SDL_Texture* superslash_l, SDL_Te
         frame+=4;
         for(int i=0; i<=9; i++)
         {
-            if(monster[i].mPosX - quadrad.x - camX - 80 >= 0 && monster[i].mPosX - quadrad.x - camX - 80 <= 5)
+            if(monster[i].mPosX - quadrad.x - camX - 50 >= 0 && monster[i].mPosX - quadrad.x - camX - 50 <= 5)
             {
                 if(monster[i].health.w >= 10) monster[i].health.w-=10;
                 else monster[i].health.w = 0;
             }
         }
+
+        if(boss.mPosX - quadrad.x - camX - 100 >= 0 && boss.mPosX - quadrad.x - camX - 100 <= 5)
+        {
+            boss.health.w -= 10;
+        }
+
         if(abs(frame - dis) >= 500) frame = 10000;
     }
 
     return frame;
 }
 
+int meteo_incoming(SDL_Texture* meteo, SDL_Renderer* renderer, int frame, int camX)
+{
+    SDL_Rect quadrad = {3660 - camX, frame, 200, 300};
+    SDL_RenderCopy(renderer, meteo, NULL, &quadrad);
+    frame+=4;
+    return frame;
+}
+
+int render_meteo(int knight_mPosX, int rep, int &meteo_frame, SDL_Texture* danger_sign, SDL_Texture* meteo, SDL_Renderer* renderer, int camX, int &knight_health)
+{
+    if(knight_mPosX >= 3300 && knight_mPosX <= 3900)
+    {
+        if(rep == 100)
+        {
+            meteo_frame = meteo_incoming(meteo, renderer, meteo_frame, camX);
+            if(knight_mPosX >= 3600 && knight_mPosX <= 3800 && meteo_frame >= 100 && meteo_frame <= 200) knight_health--;
+
+        }
+        else
+        {
+            SDL_Rect quadrad = {3660 - camX, 10, 100, 100};
+            SDL_RenderCopy(renderer, danger_sign, NULL, &quadrad);
+            rep++;
+        }
+    }
+    return rep;
+}
+
 void render_items(SDL_Renderer* renderer, SDL_Texture* item, int camX)
 {
-    SDL_Rect quadrad = {900 - camX, 330, 80, 50};
+    SDL_Rect quadrad = {5350 - camX, 330, 80, 50};
     SDL_RenderCopy(renderer, item, NULL, &quadrad);
 }
 

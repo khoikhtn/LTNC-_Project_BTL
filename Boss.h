@@ -24,6 +24,7 @@ class Boss
         int charging = 200, stunning = 110, raging = 850, counting_rage = 0, counting_stunt = 0;
 
         bool charge = false, launch = false, rage = false, stunt = false;
+        bool left_done = false, right_done = false;
 
         bool enter_boss_stage(int knight_mPosX);
 

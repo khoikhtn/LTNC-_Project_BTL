@@ -67,7 +67,7 @@ void Monster::move(int knight_mPosX, SDL_Rect SpriteClips[])
             if(standing/20 > 12) standing = 220;
         }
     }
-    if(health.w == 0)
+    if(health.w <= 0)
     {
         currentClip = &SpriteClips[13];
         health_border.w = 0;

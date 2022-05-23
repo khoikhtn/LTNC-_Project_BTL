@@ -16,6 +16,7 @@ void Boss::loadtexture(string path_right, string path_left, SDL_Renderer* render
     left = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 
     mTexture = left;
+    left_done = true;
 
     SDL_FreeSurface(loadedSurface);
 }
@@ -28,17 +29,17 @@ bool Boss::enter_boss_stage(int knight_mPosX)
 
 void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
 {
-    if(knight_mPosX < mPosX && charge == false && stunt == false && rage == false)
+    if(left_done == true && charge == false && stunt == false && rage == false)
     {
         mTexture = left;
         mPosX--;
         currentClip = &SpriteClips[frame/10];
         frame++;
         if(frame/10 >= 4) frame = 0;
-        }
+    }
 
 
-    else if(knight_mPosX >= mPosX && charge == false && stunt == false && rage == false)
+    else if(right_done == true && charge == false && stunt == false && rage == false)
     {
         mTexture = right;
         mPosX++;
@@ -59,6 +60,8 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
             {
                 launch = false;
                 charge = false;
+                left_done = false;
+                right_done = true;
                 currentClip = &SpriteClips[0];
                 charging = 200;
                 counting_stunt++;
@@ -71,6 +74,8 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
             {
                 launch = false;
                 charge = false;
+                right_done = false;
+                left_done = true;
                 currentClip = &SpriteClips[0];
                 charging = 200;
                 counting_stunt++;
@@ -95,6 +100,7 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
 
     if(health.w >= 100 && health.w <= 110)//Rage
     {
+        mPosY = 190;
         rage = true;
         currentClip = &SpriteClips[raging/50];
         raging++;
@@ -116,11 +122,12 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         if(raging/8 > 27 && counting_rage == 2)
         {
             rage = false;
-            //health.w-=11;
+            health.w-=11;
             if(mTexture == left) mPosX = 7000;
             raging = 850;
             counting_rage = 0;
             counting_stunt = 0;
+            mPosY = 190;
         }
     }
 

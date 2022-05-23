@@ -16,14 +16,14 @@ void Knight::loadtexture(string path_right, string path_left, SDL_Renderer* rend
 
 }
 
-void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Texture* superslash_left, SDL_Texture* superslash_right, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT)
+void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Texture* superslash_left, SDL_Texture* superslash_right, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT, int &rep, int &meteo_frame, SDL_Texture* danger_sign, SDL_Texture* meteo)
 {
     const Uint8* keystates = SDL_GetKeyboardState(NULL);
 
     //Left and Right
     if(keystates[SDL_SCANCODE_LEFT])
     {
-        mPosX-=10;
+        mPosX-=4;
         mTexture = left;
         currentClip = &SpriteClips[frame/10];
         frame++;
@@ -31,7 +31,7 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
     }
     if(keystates[SDL_SCANCODE_RIGHT])
     {
-        mPosX+=10;
+        mPosX+=4;
         mTexture = right;
         currentClip = &SpriteClips[frame/10];
         frame++;
@@ -41,14 +41,13 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
     //Up: Jump
     if(keystates[SDL_SCANCODE_UP])
     {
-
         currentClip = &SpriteClips[4];
         int i=1;
         while(i<=11)
         {
             mPosY-=i;
-            if(keystates[SDL_SCANCODE_RIGHT]) mPosX+=3;
-            if(keystates[SDL_SCANCODE_LEFT]) mPosX-=3;
+            if(keystates[SDL_SCANCODE_RIGHT]) mPosX+=5;
+            if(keystates[SDL_SCANCODE_LEFT]) mPosX-=5;
             for(int i=0; i<=9; i++) monster[i].move(mPosX, SpriteClips);
             camera.x = mPosX - camera.w/2;
             camera.y = mPosY - camera.h/2;
@@ -86,7 +85,9 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
             boss.render(camera.x, camera.y, renderer, SpriteClips);
 
             this->render(camera.x, camera.y, renderer, SpriteClips);
-            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster);
+            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster, boss);
+
+            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
 
             SDL_RenderPresent(renderer);
             i++;
@@ -95,8 +96,8 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
         while(i<=11)
         {
             mPosY+=i;
-            if(keystates[SDL_SCANCODE_RIGHT]) mPosX+=3;
-            if(keystates[SDL_SCANCODE_LEFT]) mPosX-=3;
+            if(keystates[SDL_SCANCODE_RIGHT]) mPosX+=5;
+            if(keystates[SDL_SCANCODE_LEFT]) mPosX-=5;
             for(int i=0; i<=9; i++) monster[i].move(mPosX, SpriteClips);
             camera.x = mPosX - camera.w/2;
             camera.y = mPosY - camera.h/2;
@@ -134,7 +135,9 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
             boss.render(camera.x, camera.y, renderer, SpriteClips);
 
             this->render(camera.x, camera.y, renderer, SpriteClips);
-            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster);
+            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster, boss);
+
+            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
 
             SDL_RenderPresent(renderer);
             i++;
@@ -169,7 +172,8 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
             boss.render(camera.x, camera.y, renderer, SpriteClips);
 
             this->render(camera.x, camera.y, renderer, SpriteClips);
-            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster);
+            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster, boss);
+            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
             SDL_RenderPresent(renderer);
 
             fight_scene++;
@@ -222,14 +226,16 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
             boss.render(camera.x, camera.y, renderer, SpriteClips);
 
             this->render(camera.x, camera.y, renderer, SpriteClips);
-            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster);
+            slash_frame = render_super_slash(renderer, superslash_left, superslash_right, slash_frame, slash_distance, direction, camera.x, monster, boss);
+
+            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
 
             SDL_RenderPresent(renderer);
         }
     }
 
     //Special Attack
-    if(keystates[SDL_SCANCODE_X] && power.w == 50)
+    if(keystates[SDL_SCANCODE_X])
     {
         if(mTexture == left) direction = false;
         else direction = true;
@@ -261,6 +267,8 @@ void Knight::handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss,S
             boss.render(camera.x, camera.y, renderer, SpriteClips);
 
             this->render(camera.x, camera.y, renderer, SpriteClips);
+
+            rep = render_meteo(mPosX, rep, meteo_frame, danger_sign, meteo, renderer, camera.x, health.w);
 
             SDL_RenderPresent(renderer);
             special_attack++;

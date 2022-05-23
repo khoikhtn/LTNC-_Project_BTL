@@ -34,7 +34,7 @@ class Knight
         int slash_distance;
 
         void loadtexture(string path_right, string path_left, SDL_Renderer* renderer);
-        void handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Texture* superslash_left, SDL_Texture* superslash_right, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT);
+        void handleEvent(SDL_Rect SpriteClips[], Monster monster[], Boss &boss, SDL_Renderer* renderer, SDL_Texture* mapp, SDL_Texture* item, SDL_Texture* superslash_left, SDL_Texture* superslash_right, SDL_Rect camera, int LEVEL_WIDTH, int LEVEL_HEIGHT, int &rep, int &meteo_frame, SDL_Texture* danger_sign, SDL_Texture* meteo);
         void stand_still(SDL_Event &e);
 
         void hits_monster_status(Monster &monster, SDL_Rect SpriteClips[]);//Chém quái

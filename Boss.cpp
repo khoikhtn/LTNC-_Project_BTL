@@ -98,7 +98,8 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         }
     }
 
-    if((health.w >= 110 && health.w <= 130) || (health.w >= 30 && health.w <= 50))//Rage
+    //Rage
+    if((health.w >= 110 && health.w <= 130) || (health.w >= 30 && health.w <= 50))
     {
         mPosY = 190;
         rage = true;

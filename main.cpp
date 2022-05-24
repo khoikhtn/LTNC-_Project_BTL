@@ -246,7 +246,6 @@ int Game(SDL_Window* &window, SDL_Renderer* &renderer)
         SDL_RenderCopy(renderer, pause_but, &current, &quadrad);
 
         SDL_RenderPresent(renderer);
-        cout << knight.mPosX << endl;
     }
 }
 

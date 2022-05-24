@@ -12,7 +12,7 @@
 1653366593 source:d:\22.06.04 uet\code\project_btl\knight.cpp
 	"Knight.h"
 
-1653366993 source:d:\22.06.04 uet\code\project_btl\main.cpp
+1653433713 source:d:\22.06.04 uet\code\project_btl\main.cpp
 	<iostream>
 	<SDL.h>
 	"Knight.h"

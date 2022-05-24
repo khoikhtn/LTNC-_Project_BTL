@@ -98,7 +98,7 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         }
     }
 
-    if((health.w >= 120 && health.w <= 130) || (health.w >= 30 && health.w <= 40))//Rage
+    if((health.w >= 110 && health.w <= 130) || (health.w >= 30 && health.w <= 50))//Rage
     {
         mPosY = 190;
         rage = true;
@@ -122,7 +122,7 @@ void Boss::move(int knight_mPosX, SDL_Rect SpriteClips[])
         if(raging/8 > 27 && counting_rage == 2)
         {
             rage = false;
-            health.w-=11;
+            health.w-=21;
             if(mTexture == left) mPosX = 7000;
             raging = 850;
             counting_rage = 0;
